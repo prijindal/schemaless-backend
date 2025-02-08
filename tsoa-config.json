@@ -1,0 +1,44 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": [
+    "src/**/*Controller.ts"
+  ],
+  "spec": {
+    "basePath": "/",
+    "useTitleTagsForInlineObjects": true,
+    "outputDirectory": "src/build",
+    "specVersion": 3,
+    "securityDefinitions": {
+      "api_key": {
+          "type": "apiKey",
+          "name": "x-api-key",
+          "in": "header",
+          "description": "For admin operations"
+      },
+      "bearer_centralized": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "For a user which has this server as home"
+      },
+      "bearer_auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "For a user which does not have this server as home, but has permission to access this"
+      }
+    }
+  },
+  "swagger": {
+    "outputDirectory": ".",
+    "entryFile": "./src/app.ts"
+  },
+  "routes": {
+    "basePath": "/",
+    "entryFile": "./src/app.ts",
+    "authenticationModule": "./src/auth/authentication.ts",
+    "routesDir": "src/build",
+    "iocModule": "src/ioc"
+  }
+}
