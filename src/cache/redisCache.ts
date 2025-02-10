@@ -32,6 +32,6 @@ export class RedisCacheImplementation implements CacheImplementation {
 
   public async health(): Promise<boolean> {
     const stats = await this.redisService.redis.status;
-    return stats !== "ready";
+    return stats === "ready";
   }
 }
