@@ -1,20 +1,11 @@
 import { Request } from "express";
-import { IncomingHttpHeaders } from "http";
 import { InvalidCredentialsError } from "../errors/error";
+import { extractTokenFromHeaders } from "../helpers/token";
 import { iocContainer } from "../ioc";
 import { logger } from "../logger";
 import { AppKeyAuthorizedRequest, UserAuthorizedRequest } from "../types/auth.types";
 import { AppKeyAuthService } from "./appkey.user.service";
 import { UserAuthService } from "./auth.user.service";
-
-function extractTokenFromHeaders(headers: IncomingHttpHeaders) {
-  const authorization = headers.authorization;
-  if (authorization == null || !authorization.startsWith("Bearer ")) {
-    throw new InvalidCredentialsError("Token invalid");
-  }
-  const jwtToken = authorization.split("Bearer ")[1];
-  return jwtToken;
-}
 
 export async function expressAuthentication(
   request: Request,

@@ -4,23 +4,23 @@ import http from "http";
 import SocketIO from "socket.io";
 import { logger } from "./logger";
 
+import { SocketController } from './socket/socketController';
+
 import { app, shutdown } from "./app";
 
 import { HOST, PORT } from './config';
+import { iocContainer } from './ioc';
 import { setup } from "./setup";
 
 
 const server = http.createServer(app);
 const io = new SocketIO.Server(server);
 
+io.on("connection", (socket) => iocContainer.get(SocketController).connectionListener(socket));
+
 const listener = server.listen(PORT, HOST, 0, () =>
   logger.info(`Example app listening at http://${HOST}:${PORT}`)
 );
-
-io.on("connection", (socket) => {
-  logger.info("New Connection", socket.connected);
-});
-
 const close = async () => {
   logger.warn("Closing server ....");
   listener.close();
@@ -33,6 +33,3 @@ setup().catch(close);
 
 process.on("SIGINT", close);
 process.on("SIGTERM", close);
-process.on("unhandledRejection", (reason) => {
-  logger.error(reason);
-});

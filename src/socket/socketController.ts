@@ -1,0 +1,38 @@
+import { inject } from "inversify";
+import { Socket } from "socket.io";
+import { AppKeyAuthService } from "../auth/appkey.user.service";
+import { EntityActionResponse, EntityActionService, EntityHistoryResponse, EntitySearchResponse } from "../controllers/entity/entityService";
+import { extractTokenFromHeaders } from "../helpers/token";
+import { logger } from "../logger";
+import { singleton } from "../singleton";
+
+@singleton(SocketController)
+export class SocketController {
+  constructor(
+    @inject(AppKeyAuthService) private appKeyAuthService: AppKeyAuthService,
+    @inject(EntityActionService) private entityActionService: EntityActionService,
+  ) { }
+
+  async connectionListener(socket: Socket) {
+    const token = extractTokenFromHeaders(socket.handshake.headers);
+    const appkeyPayload = await this.appKeyAuthService.verifyToken(token);
+    if (appkeyPayload == null) {
+      socket.disconnect();
+      return;
+    }
+    logger.info("New Connection", socket.connected);
+    socket.on("search_entities", async (body: string, callback: (f: EntitySearchResponse[]) => void) => {
+      const response = await this.entityActionService.searchEntitiesData(JSON.parse(body), appkeyPayload.appkey);
+      callback(response);
+    })
+    socket.on("search_history", async (body: string, callback: (f: EntityHistoryResponse[]) => void) => {
+      const response = await this.entityActionService.searchEntitiesHistory(JSON.parse(body), appkeyPayload.appkey);
+      callback(response);
+    })
+    socket.on("actions", async (body: string, callback: (f: EntityActionResponse[]) => void) => {
+      const response = await this.entityActionService.entityAction(JSON.parse(body), appkeyPayload.appkey);
+      callback(response);
+    })
+    socket.emit("connected");
+  }
+}
