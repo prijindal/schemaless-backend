@@ -22,6 +22,7 @@ io.on("connection", (socket) => {
 });
 
 const close = async () => {
+  logger.warn("Closing server ....");
   listener.close();
   server.close();
   await shutdown();
@@ -32,3 +33,6 @@ setup().catch(close);
 
 process.on("SIGINT", close);
 process.on("SIGTERM", close);
+process.on("unhandledRejection", (reason) => {
+  logger.error(reason);
+});

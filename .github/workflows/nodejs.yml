@@ -58,6 +58,9 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      redis:
+        image: redis
+
     steps:
       - uses: actions/setup-node@v4
         with:
@@ -70,6 +73,9 @@ jobs:
         run: npm run test
         env:
           POSTGRES_URI: postgres://postgres:postgres@localhost:5432/postgres
+          REDIS_URI: redis://localhost:6379
+          CACHE_IMPLEMENTATION: redis
+          LOG_LEVEL: debug
       - uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
