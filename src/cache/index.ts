@@ -1,23 +1,24 @@
+import { inject } from "inversify";
 import { CACHE_IMPLEMENTATION } from "../config";
 import { logger } from "../logger";
 import { singleton } from "../singleton";
 import { CacheImplementation } from "./base";
-import { NoCacheImplementation } from "./noCache";
 import { NodeCacheImplementation } from "./nodeCache";
+import { RedisCacheImplementation } from "./redisCache";
 
 @singleton(CacheService)
 export class CacheService implements CacheImplementation {
   private cacheImplmentation: CacheImplementation;
-  constructor() {
+  constructor(@inject(RedisCacheImplementation) private redisCacheImplementation: RedisCacheImplementation) {
     // We can checkout new implemntation from this, Example: redis/sql etc
     logger.info(`Using Cache implementation: ${CACHE_IMPLEMENTATION}`)
-    switch(CACHE_IMPLEMENTATION) {
-      case "node-cache":
-        this.cacheImplmentation = new NodeCacheImplementation();
+    switch (CACHE_IMPLEMENTATION) {
+      case "redis":
+        this.cacheImplmentation = redisCacheImplementation;
         return;
-      case "no":
+      case "node-cache":
       default:
-        this.cacheImplmentation = new NoCacheImplementation();
+        this.cacheImplmentation = new NodeCacheImplementation();
         return;
     }
   }
@@ -38,7 +39,7 @@ export class CacheService implements CacheImplementation {
     return this.cacheImplmentation.clear();
   }
 
-  public stats(): Promise<{ keys: number; }> {
-    return this.cacheImplmentation.stats();
+  public health(): Promise<boolean> {
+    return this.cacheImplmentation.health();
   }
 }

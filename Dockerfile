@@ -11,8 +11,6 @@ USER node
 COPY --chown=node:node package* /app/
 COPY --chown=node:node node_modules /app/node_modules
 
-RUN npm install better-sqlite3
-
 COPY --chown=node:node dist /app/dist
 
 CMD [ "dumb-init", "node", "dist/index.js"]

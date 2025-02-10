@@ -10,23 +10,17 @@
     "outputDirectory": "src/build",
     "specVersion": 3,
     "securityDefinitions": {
-      "api_key": {
-          "type": "apiKey",
-          "name": "x-api-key",
-          "in": "header",
-          "description": "For admin operations"
-      },
-      "bearer_centralized": {
+      "bearer_appkey": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "For a user which has this server as home"
+        "description": "For use from specifc apps under a user"
       },
       "bearer_auth": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "For a user which does not have this server as home, but has permission to access this"
+        "description": "For a user which will access this from ui"
       }
     }
   },

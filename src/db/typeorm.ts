@@ -1,5 +1,4 @@
 import { DataSource } from "typeorm";
-import { BetterSqlite3ConnectionOptions } from "typeorm/driver/better-sqlite3/BetterSqlite3ConnectionOptions.js";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions.js";
 import { Retrier } from "../helpers/retrier";
 import { logger } from "../logger";
@@ -16,7 +15,7 @@ export class TypeOrmConnection {
   }
 
   connect = async (
-    dbOptions: PostgresConnectionOptions | BetterSqlite3ConnectionOptions
+    dbOptions: PostgresConnectionOptions
   ) => {
     try {
       this._conn = new DataSource({ ...dbOptions });

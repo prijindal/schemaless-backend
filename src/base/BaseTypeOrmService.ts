@@ -52,7 +52,7 @@ export abstract class BaseTypeOrmService<T extends { id: string }> {
   constructor(
     @inject(TypeOrmConnection) protected conn: TypeOrmConnection,
     @inject(PrometheusClient) protected prometheusClient: PrometheusClient
-  ) {}
+  ) { }
 
   async getAll(): Promise<T[]> {
     return await this.model.find();
@@ -86,6 +86,17 @@ export abstract class BaseTypeOrmService<T extends { id: string }> {
     return await this.model.exists({ where });
   }
 
+  async createWithId(
+    newResource: Omit<T, "created_at" | "updated_at">
+  ): Promise<T> {
+    const saved = await this.model.save(newResource as T);
+    this.prometheusClient.DBInsertCounter.labels({
+      collection: this.model.metadata.tableName,
+      worker_id: this.prometheusClient.HostId,
+    }).inc(1);
+    return saved;
+  }
+
   async create(
     newResource: Omit<T, "id" | "created_at" | "updated_at">
   ): Promise<T> {
@@ -116,22 +127,13 @@ export abstract class BaseTypeOrmService<T extends { id: string }> {
     return updated.affected;
   }
 
-  async delete(id: string, soft: boolean = false) {
-    if (soft) {
-      return await this.model.softDelete({ id: id as any });
-    } else {
-      return await this.model.delete({ id: id as any });
-    }
+  async delete(id: string) {
+    return await this.model.delete({ id: id as any });
   }
 
-  async deleteMany(filter: FindOptionsWhere<T>, softDelete = true) {
-    if (softDelete) {
-      const deleteResult = await this.model.softDelete(filter);
-      return deleteResult;
-    } else {
-      const deleteResult = await this.model.delete(filter);
-      return deleteResult;
-    }
+  async deleteMany(filter: FindOptionsWhere<T>) {
+    const deleteResult = await this.model.delete(filter);
+    return deleteResult;
   }
 
   getRawMany(

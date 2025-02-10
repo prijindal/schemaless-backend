@@ -1,4 +1,3 @@
-import { BetterSqlite3ConnectionOptions } from "typeorm/driver/better-sqlite3/BetterSqlite3ConnectionOptions.js";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions.js";
 import { TypeOrmConnection } from "./db/typeorm";
 import { logger } from "./logger";
@@ -8,8 +7,7 @@ import { iocContainer } from "./ioc";
 
 export async function setup(
   dbOptions:
-    | PostgresConnectionOptions
-    | BetterSqlite3ConnectionOptions = options
+    PostgresConnectionOptions = options
 ) {
   try {
     await Promise.all([iocContainer.get(TypeOrmConnection).connect(dbOptions)]);

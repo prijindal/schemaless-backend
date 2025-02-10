@@ -28,10 +28,9 @@ export class NodeCacheImplementation implements CacheImplementation {
     this.nodeCache.flushAll();
   }
 
-  public async stats(): Promise<{ keys: number; }> {
+  public async health(): Promise<boolean> {
     const stats = this.nodeCache.getStats();
-    return {
-      keys: stats.keys,
-    }
+    console.log(stats);
+    return true;
   }
 }

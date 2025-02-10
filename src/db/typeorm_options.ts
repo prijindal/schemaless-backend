@@ -1,11 +1,15 @@
 import { LoggerOptions } from "typeorm";
 import { BaseDataSourceOptions } from "typeorm/data-source/BaseDataSourceOptions";
-import { BetterSqlite3ConnectionOptions } from "typeorm/driver/better-sqlite3/BetterSqlite3ConnectionOptions";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 import { PinoTypeormLogger } from "./typeorm_logger";
 
-import { AUTO_MIGRATION, DB_PATH, LOG_LEVEL, POSTGRES_URI } from "../config";
+import { AUTO_MIGRATION, LOG_LEVEL, POSTGRES_URI } from "../config";
+import { AppKey } from "../entity/app_key.entity";
+import { EntityData } from "../entity/entity_data.entity";
+import { EntityHistory } from "../entity/entity_history.entity";
+import { Project } from "../entity/project.entity";
+import { User } from "../entity/user.entity";
 
 const logLevelMap: { [k: string]: LoggerOptions } = {
   info: ["error", "migration", "schema", "warn"],
@@ -21,6 +25,11 @@ const typeOrmLogging: LoggerOptions = logLevelMap[LOG_LEVEL] || [
 
 export const baseDbOptions: Omit<BaseDataSourceOptions, "type"> = {
   entities: [
+    User,
+    Project,
+    AppKey,
+    EntityData,
+    EntityHistory,
   ],
   synchronize: AUTO_MIGRATION,
   logging: typeOrmLogging,
@@ -31,19 +40,11 @@ export const baseDbOptions: Omit<BaseDataSourceOptions, "type"> = {
 };
 
 const createOptions = () => {
-  if (POSTGRES_URI) {
-    return {
-      ...baseDbOptions,
-      type: "postgres",
-      url: POSTGRES_URI,
-    } as PostgresConnectionOptions;
-  } else {
-    return {
-      ...baseDbOptions,
-      type: "better-sqlite3",
-      database: DB_PATH,
-    } as BetterSqlite3ConnectionOptions;
-  }
+  return {
+    ...baseDbOptions,
+    type: "postgres",
+    url: POSTGRES_URI,
+  } as PostgresConnectionOptions;
 };
 
 export const options = createOptions();
