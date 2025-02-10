@@ -39,7 +39,6 @@ export class HealthController {
         "HOST": process.env.HOST,
         "AUTO_MIGRATION": process.env.AUTO_MIGRATION,
         "LOG_LEVEL": process.env.LOG_LEVEL,
-        "CACHE_IMPLEMENTATION": process.env.CACHE_IMPLEMENTATION,
         "REQUEST_TRACING": process.env.REQUEST_TRACING,
         "LOG_FORMATTER": process.env.LOG_FORMATTER,
       },

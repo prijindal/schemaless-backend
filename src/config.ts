@@ -10,10 +10,6 @@ export const LOG_LEVEL = !isEmpty(process.env.LOG_LEVEL)
     : "debug";
 
 
-type CacheImplementations = "redis" |
-  "node-cache";
-
-export const CACHE_IMPLEMENTATION: CacheImplementations = process.env.CACHE_IMPLEMENTATION as (CacheImplementations | undefined) || "node-cache";
 export const POSTGRES_URI = process.env.POSTGRES_URI;
 export const REDIS_URI = process.env.REDIS_URI || "redis://localhost:6379";
 

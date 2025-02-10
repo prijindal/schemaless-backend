@@ -1,7 +1,5 @@
 FROM node:22
 
-RUN apk add --no-cache dumb-init
-
 ENV NODE_ENV=production
 
 WORKDIR /app
@@ -13,4 +11,4 @@ COPY --chown=node:node node_modules /app/node_modules
 
 COPY --chown=node:node dist /app/dist
 
-CMD [ "dumb-init", "node", "dist/index.js"]
+CMD [ "node", "dist/index.js"]

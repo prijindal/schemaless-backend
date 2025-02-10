@@ -1,45 +1,37 @@
 import { inject } from "inversify";
-import { CACHE_IMPLEMENTATION } from "../config";
-import { logger } from "../logger";
+import { RedisService } from "../redis";
 import { singleton } from "../singleton";
 import { CacheImplementation } from "./base";
-import { NodeCacheImplementation } from "./nodeCache";
-import { RedisCacheImplementation } from "./redisCache";
 
 @singleton(CacheService)
 export class CacheService implements CacheImplementation {
-  private cacheImplmentation: CacheImplementation;
-  constructor(@inject(RedisCacheImplementation) private redisCacheImplementation: RedisCacheImplementation) {
-    // We can checkout new implemntation from this, Example: redis/sql etc
-    logger.info(`Using Cache implementation: ${CACHE_IMPLEMENTATION}`)
-    switch (CACHE_IMPLEMENTATION) {
-      case "redis":
-        this.cacheImplmentation = redisCacheImplementation;
-        return;
-      case "node-cache":
-      default:
-        this.cacheImplmentation = new NodeCacheImplementation();
-        return;
+  constructor(@inject(RedisService) private redisService: RedisService) { }
+
+
+  public async get<T>(key: string): Promise<T | undefined> {
+    const value = await this.redisService.redis.get(key);
+    if (value == null) {
+      return undefined;
     }
+    return JSON.parse(value);
   }
 
-  public get<T>(key: string) {
-    return this.cacheImplmentation.get<T>(key);
+  public async set<T>(key: string, value: T, ttl?: string | number) {
+    await (ttl
+      ? this.redisService.redis.setex(key, ttl, JSON.stringify(value))
+      : this.redisService.redis.set(key, JSON.stringify(value)));
   }
 
-  public set<T>(key: string, value: T, ttl?: string | number) {
-    return this.cacheImplmentation.set<T>(key, value, ttl);
+  public async remove(key: string): Promise<void> {
+    await this.redisService.redis.del(key);
   }
 
-  public remove(key: string): Promise<void> {
-    return this.cacheImplmentation.remove(key);
+  public async clear(): Promise<void> {
+    await this.redisService.redis.flushall();
   }
 
-  public clear(): Promise<void> {
-    return this.cacheImplmentation.clear();
-  }
-
-  public health(): Promise<boolean> {
-    return this.cacheImplmentation.health();
+  public async health(): Promise<boolean> {
+    const stats = await this.redisService.redis.status;
+    return stats === "ready";
   }
 }
