@@ -13,11 +13,3 @@ services:
       POSTGRES_USER: schemaless
       POSTGRES_DB: schemaless
       POSTGRES_PASSWORD: schemaless
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin
-    ports:
-      - "8200:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: priyanshujindal1995@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: password

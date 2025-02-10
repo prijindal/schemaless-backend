@@ -51,7 +51,9 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: schemaless
+          POSTGRES_DB: schemaless
+          POSTGRES_PASSWORD: schemaless
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -72,7 +74,7 @@ jobs:
       - name: Test
         run: npm run test
         env:
-          POSTGRES_URI: postgres://postgres:postgres@localhost:5432/postgres
+          POSTGRES_URI: postgres://schemaless:schemaless@localhost:5432/schemaless
           REDIS_URI: redis://localhost:6379
           LOG_LEVEL: debug
       - uses: codecov/codecov-action@v5

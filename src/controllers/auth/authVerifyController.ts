@@ -1,5 +1,5 @@
 import { provide } from "inversify-binding-decorators";
-import { Post, Request, Route, Security, Tags } from "tsoa";
+import { Get, Request, Route, Security, Tags } from "tsoa";
 import { User } from "../../entity/user.entity";
 import { AppKeyAuthorizedRequest, UserAuthorizedRequest } from "../../types/auth.types";
 
@@ -16,7 +16,7 @@ export class AuthVerifyController {
   constructor(
   ) { }
 
-  @Post("/appkey")
+  @Get("/appkey")
   @Security("bearer_appkey")
   async verifyAppKey(@Request() request: AppKeyAuthorizedRequest): Promise<AppKeyVerifyResponse> {
     const project = request.project;
@@ -27,7 +27,7 @@ export class AuthVerifyController {
     };
   }
 
-  @Post("/user")
+  @Get("/user")
   @Security("bearer_auth")
   async verifyUserAuth(@Request() request: UserAuthorizedRequest): Promise<UserVerifyResponse> {
     const user = request.loggedInUser;
