@@ -4,7 +4,7 @@ import http from "http";
 import SocketIO from "socket.io";
 import { logger } from "./logger";
 
-import { SocketController } from './socket/socketController';
+import { SocketController } from './socket/socket.service';
 
 import { app, shutdown } from "./app";
 

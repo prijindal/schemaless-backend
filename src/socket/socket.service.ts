@@ -5,12 +5,14 @@ import { EntityActionResponse, EntityActionService, EntityHistoryResponse, Entit
 import { extractTokenFromHeaders } from "../helpers/token";
 import { logger } from "../logger";
 import { singleton } from "../singleton";
+import { ConnectionManager } from "./connectionmanager.service";
 
 @singleton(SocketController)
 export class SocketController {
   constructor(
     @inject(AppKeyAuthService) private appKeyAuthService: AppKeyAuthService,
     @inject(EntityActionService) private entityActionService: EntityActionService,
+    @inject(ConnectionManager) private connectionManager: ConnectionManager,
   ) { }
 
   async connectionListener(socket: Socket) {
@@ -30,9 +32,16 @@ export class SocketController {
       callback(response);
     })
     socket.on("actions", async (body: string, callback: (f: EntityActionResponse[]) => void) => {
+      const req = JSON.parse(body);
       const response = await this.entityActionService.entityAction(JSON.parse(body), appkeyPayload.appkey);
       callback(response);
+
+      this.connectionManager.emitOnAllConnections(appkeyPayload.appkey.project_id, "server_actions", req, [socket.id]);
     })
     socket.emit("connected");
+    this.connectionManager.onConnect(appkeyPayload.appkey.project_id, socket);
+    socket.on("disconnect", () => {
+      this.connectionManager.onDisconnect(appkeyPayload.appkey.project_id, socket.id);
+    });
   }
 }
