@@ -26,6 +26,6 @@ export class AppKey {
     @Column()
     public bcrypt_hash: string; // Encrypted password
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: "timestamptz" })
     created_at: Date;
 }

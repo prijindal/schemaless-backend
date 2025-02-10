@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import dayjs from "dayjs";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { FindOptionsWhere, In, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
@@ -42,6 +43,7 @@ export type EntityHistoryResponse = {
 
 type EntityActionBase = {
   entity_name: string;
+  timestamp: Date;
   payload: object;
 }
 
@@ -145,12 +147,21 @@ export class EntityActionService {
             id: entityAction.id,
             name: entityAction.entity_name,
             content: entityAction.payload,
+            updated_at: entityAction.timestamp,
+            created_at: entityAction.timestamp,
           });
           updatedFields = 1;
         } else if (entityAction.action === "UPDATE") {
-          const updatedEntities = await entityDataRepository.update({ id: In(entityAction.ids) }, { content: entityAction.payload as object });
-          if (updatedEntities.affected != null) {
-            updatedFields = updatedEntities.affected;
+          // Only update if timestamp is greater than the updated_at time of the entry for thid id in db
+          const existingEntities = await entityDataRepository.find({ where: { id: In(entityAction.ids) } });
+          for (const existingEntity of existingEntities) {
+            console.log(dayjs(existingEntity.updated_at) < dayjs(entityAction.timestamp));
+            if (dayjs(existingEntity.updated_at) < dayjs(entityAction.timestamp)) {
+              const updatedEntities = await entityDataRepository.update({ id: existingEntity.id }, { content: { ...existingEntity.content, ...entityAction.payload as object }, updated_at: entityAction.timestamp });
+              if (updatedEntities.affected != null) {
+                updatedFields += updatedEntities.affected;
+              }
+            }
           }
         } else if (entityAction.action === "DELETE") {
           const updatedEntities = await entityDataRepository.delete({ id: In(entityAction.ids) });
@@ -165,6 +176,7 @@ export class EntityActionService {
           name: entityAction.entity_name,
           action: entityAction.action,
           payload: { ...entityAction.payload, ids: (entityAction.action === "CREATE") ? undefined : entityAction.ids, },
+          timestamp: entityAction.timestamp,
         });
         const response = { affectedrows: updatedFields, entity_name: entityAction.entity_name };
         responses.push(response);

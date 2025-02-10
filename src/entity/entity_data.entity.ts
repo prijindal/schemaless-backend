@@ -29,9 +29,9 @@ export class EntityData {
     @Column({ type: "jsonb" })
     public content: object; // Value of that entity
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: "timestamptz" })
     updated_at: Date;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: "timestamptz" })
     created_at: Date;
 }

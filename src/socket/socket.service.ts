@@ -24,19 +24,30 @@ export class SocketController {
     }
     logger.info("New Connection", socket.connected);
     socket.on("search_entities", async (body: string, callback: (f: EntitySearchResponse[]) => void) => {
-      const response = await this.entityActionService.searchEntitiesData(JSON.parse(body), appkeyPayload.appkey);
-      callback(response);
+      try {
+        const response = await this.entityActionService.searchEntitiesData(JSON.parse(body), appkeyPayload.appkey);
+        callback(response);
+      } catch (e) {
+        logger.error(e);
+      }
     })
     socket.on("search_history", async (body: string, callback: (f: EntityHistoryResponse[]) => void) => {
-      const response = await this.entityActionService.searchEntitiesHistory(JSON.parse(body), appkeyPayload.appkey);
-      callback(response);
+      try {
+        const response = await this.entityActionService.searchEntitiesHistory(JSON.parse(body), appkeyPayload.appkey);
+        callback(response);
+      } catch (e) {
+        logger.error(e);
+      }
     })
     socket.on("actions", async (body: string, callback: (f: EntityActionResponse[]) => void) => {
-      const req = JSON.parse(body);
-      const response = await this.entityActionService.entityAction(JSON.parse(body), appkeyPayload.appkey);
-      callback(response);
-
-      this.connectionManager.emitOnAllConnections(appkeyPayload.appkey.project_id, "server_actions", req, [socket.id]);
+      try {
+        const req = JSON.parse(body);
+        const response = await this.entityActionService.entityAction(JSON.parse(body), appkeyPayload.appkey);
+        callback(response);
+        this.connectionManager.emitOnAllConnections(appkeyPayload.appkey.project_id, "server_actions", req, [socket.id]);
+      } catch (e) {
+        logger.error(e);
+      }
     })
     socket.emit("connected");
     this.connectionManager.onConnect(appkeyPayload.appkey.project_id, socket);

@@ -25,9 +25,9 @@ export class User {
   @Column({ default: false })
   public is_admin: boolean;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamptz" })
   updated_at: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamptz" })
   created_at: Date;
 }

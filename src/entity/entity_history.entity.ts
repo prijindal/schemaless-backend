@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Project } from "./project.entity";
 import { User } from "./user.entity";
 
@@ -23,7 +23,7 @@ export class EntityHistory {
     @Column()
     public name: string; // Name of the entity
 
-    @PrimaryColumn("uuid")
+    @PrimaryGeneratedColumn("uuid")
     id: string; // Request id of the request
 
     @Column()
@@ -32,6 +32,9 @@ export class EntityHistory {
     @Column({ type: "jsonb" })
     public payload: object; // Value of that entity
 
-    @CreateDateColumn()
+    @Column({ type: "timestamptz" })
+    timestamp: Date;
+
+    @CreateDateColumn({ type: "timestamptz" })
     created_at: Date;
 }

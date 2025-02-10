@@ -18,9 +18,9 @@ export class Project {
     @JoinColumn({ name: 'user_id' })
     private _user: User;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: "timestamptz" })
     updated_at: Date;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: "timestamptz" })
     created_at: Date;
 }
