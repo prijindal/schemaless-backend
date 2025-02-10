@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm ci
       - run: npm run build
-      - run: npm ci --omit=dev
+      # - run: npm ci --omit=dev
       - name: Login to Github Packages
         uses: docker/login-action@v3
         with:
@@ -72,8 +72,8 @@ jobs:
       - name: Test
         run: npm run test
         env:
-          POSTGRES_URI: postgres://postgres:postgres@localhost:5432/postgres
-          REDIS_URI: redis://localhost:6379
+          POSTGRES_URI: postgres://postgres:postgres@postgres:5432/postgres
+          REDIS_URI: redis://redis:6379
           CACHE_IMPLEMENTATION: redis
           LOG_LEVEL: debug
       - uses: codecov/codecov-action@v5
