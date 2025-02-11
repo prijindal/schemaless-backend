@@ -2,7 +2,7 @@
 import { DecorateAll } from "decorate-all";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { FindOptionsSelect, FindOptionsWhere, In, Repository } from "typeorm";
+import { FindOptionsOrder, FindOptionsSelect, FindOptionsWhere, In, Repository } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { TypeOrmConnection } from "../db/typeorm";
 import { logger } from "../logger";
@@ -60,9 +60,9 @@ export abstract class BaseTypeOrmService<T extends { id: string }> {
 
   async getMany(
     where: FindOptionsWhere<T>,
-    { select }: { select?: FindOptionsSelect<T> } = {}
+    { select, order }: { select?: FindOptionsSelect<T>, order?: FindOptionsOrder<T> } = {}
   ): Promise<T[]> {
-    return await this.model.find({ where, select });
+    return await this.model.find({ where, select, order });
   }
 
   async getById(id: string): Promise<T | null> {

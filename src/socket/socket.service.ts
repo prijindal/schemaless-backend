@@ -19,6 +19,7 @@ export class SocketController {
     const token = extractTokenFromHeaders(socket.handshake.headers);
     const appkeyPayload = await this.appKeyAuthService.verifyToken(token);
     if (appkeyPayload == null) {
+      logger.info("Invalid connection, disconnecting");
       socket.disconnect();
       return;
     }

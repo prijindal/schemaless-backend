@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import dayjs from "dayjs";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
@@ -22,6 +21,7 @@ export interface EntitySearchRequest {
     created_at?: DateParams
     ids?: string[];
   };
+  order: Record<string, "asc" | "desc">;
 }
 
 export type EntitySearchResponse = {
@@ -34,6 +34,7 @@ export type EntityHistoryRequest = {
   params: {
     created_at?: DateParams
   };
+  order: Record<string, "asc" | "desc">;
 }
 
 export type EntityHistoryResponse = {
@@ -44,22 +45,22 @@ export type EntityHistoryResponse = {
 type EntityActionBase = {
   entity_name: string;
   timestamp: Date;
-  payload: object;
+  request_id: string;
+  entity_id: string;
 }
 
 type EntityActionCreate = EntityActionBase & {
-  id: string;
   action: "CREATE";
+  payload: object;
 }
 
 type EntityActionUpdate = EntityActionBase & {
   action: "UPDATE";
-  ids: string[];
+  payload: object;
 }
 
 type EntityActionDelete = EntityActionBase & {
   action: "DELETE";
-  ids: string[];
 }
 
 export type EntityAction = EntityActionCreate | EntityActionUpdate | EntityActionDelete;
@@ -101,7 +102,7 @@ export class EntityActionService {
           where.created_at = LessThanOrEqual(entityRequest.params.created_at.lte);
         }
       }
-      const entityResponse = await this.entityDataRepository.getMany(where);
+      const entityResponse = await this.entityDataRepository.getMany(where, { order: entityRequest.order });
       return {
         entity_name: entityRequest.entity_name,
         data: entityResponse,
@@ -112,10 +113,10 @@ export class EntityActionService {
 
   async searchEntitiesHistory(body: EntityHistoryRequest[], appkey: AppKey) {
     const response = body.map(async (entityRequest): Promise<EntityHistoryResponse> => {
-      const where: FindOptionsWhere<EntityData> = {
+      const where: FindOptionsWhere<EntityHistory> = {
         user_id: appkey.user_id,
         project_id: appkey.project_id,
-        name: entityRequest.entity_name,
+        entity_name: entityRequest.entity_name,
       };
       if (entityRequest.params.created_at) {
         if (entityRequest.params.created_at.gte) {
@@ -124,7 +125,7 @@ export class EntityActionService {
           where.created_at = LessThanOrEqual(entityRequest.params.created_at.lte);
         }
       }
-      const entityResponse = await this.entityHistoryRepository.getMany(where);
+      const entityResponse = await this.entityHistoryRepository.getMany(where, { order: entityRequest.order });
       return {
         entity_name: entityRequest.entity_name,
         data: entityResponse,
@@ -144,7 +145,7 @@ export class EntityActionService {
           entityDataRepository.save({
             user_id: appkey.user_id,
             project_id: appkey.project_id,
-            id: entityAction.id,
+            id: entityAction.entity_id,
             name: entityAction.entity_name,
             content: entityAction.payload,
             updated_at: entityAction.timestamp,
@@ -153,8 +154,8 @@ export class EntityActionService {
           updatedFields = 1;
         } else if (entityAction.action === "UPDATE") {
           // Only update if timestamp is greater than the updated_at time of the entry for thid id in db
-          const existingEntities = await entityDataRepository.find({ where: { id: In(entityAction.ids) } });
-          for (const existingEntity of existingEntities) {
+          const existingEntity = await entityDataRepository.findOne({ where: { id: entityAction.entity_id } });
+          if (existingEntity != null) {
             console.log(dayjs(existingEntity.updated_at) < dayjs(entityAction.timestamp));
             if (dayjs(existingEntity.updated_at) < dayjs(entityAction.timestamp)) {
               const updatedEntities = await entityDataRepository.update({ id: existingEntity.id }, { content: { ...existingEntity.content, ...entityAction.payload as object }, updated_at: entityAction.timestamp });
@@ -164,7 +165,7 @@ export class EntityActionService {
             }
           }
         } else if (entityAction.action === "DELETE") {
-          const updatedEntities = await entityDataRepository.delete({ id: In(entityAction.ids) });
+          const updatedEntities = await entityDataRepository.delete({ id: entityAction.entity_id });
           if (updatedEntities.affected != null) {
             updatedFields = updatedEntities.affected;
           }
@@ -172,10 +173,11 @@ export class EntityActionService {
         await entityHistoryRepository.save({
           user_id: appkey.user_id,
           project_id: appkey.project_id,
-          id: entityAction.action == "CREATE" ? entityAction.id : randomUUID(),
-          name: entityAction.entity_name,
+          id: entityAction.request_id,
+          entity_name: entityAction.entity_name,
+          entity_id: entityAction.entity_id,
           action: entityAction.action,
-          payload: { ...entityAction.payload, ids: (entityAction.action === "CREATE") ? undefined : entityAction.ids, },
+          payload: entityAction.action === "DELETE" ? {} : entityAction.payload,
           timestamp: entityAction.timestamp,
         });
         const response = { affectedrows: updatedFields, entity_name: entityAction.entity_name };
