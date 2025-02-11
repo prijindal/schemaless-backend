@@ -16,44 +16,50 @@ export class SocketController {
   ) { }
 
   async connectionListener(socket: Socket) {
-    const token = extractTokenFromHeaders(socket.handshake.headers);
-    const appkeyPayload = await this.appKeyAuthService.verifyToken(token);
-    if (appkeyPayload == null) {
-      logger.info("Invalid connection, disconnecting");
+    try {
+      const token = extractTokenFromHeaders(socket.handshake.headers);
+      const appkeyPayload = await this.appKeyAuthService.verifyToken(token);
+      if (appkeyPayload == null) {
+        logger.info("Invalid connection, disconnecting");
+        socket.disconnect();
+        return;
+      }
+      logger.info("New Connection", socket.connected);
+      socket.on("search_entities", async (body: string, callback: (f: EntitySearchResponse[]) => void) => {
+        try {
+          const response = await this.entityActionService.searchEntitiesData(JSON.parse(body), appkeyPayload.appkey);
+          callback(response);
+        } catch (e) {
+          logger.error(e);
+        }
+      })
+      socket.on("search_history", async (body: string, callback: (f: EntityHistoryResponse[]) => void) => {
+        try {
+          const response = await this.entityActionService.searchEntitiesHistory(JSON.parse(body), appkeyPayload.appkey);
+          callback(response);
+        } catch (e) {
+          logger.error(e);
+        }
+      })
+      socket.on("actions", async (body: string, callback: (f: EntityActionResponse[]) => void) => {
+        try {
+          const req = JSON.parse(body);
+          const response = await this.entityActionService.entityAction(JSON.parse(body), appkeyPayload.appkey);
+          callback(response);
+          this.connectionManager.emitOnAllConnections(appkeyPayload.appkey.project_id, "server_actions", req, [socket.id]);
+        } catch (e) {
+          logger.error(e);
+        }
+      })
+      socket.emit("connected");
+      this.connectionManager.onConnect(appkeyPayload.appkey.project_id, socket);
+      socket.on("disconnect", () => {
+        this.connectionManager.onDisconnect(appkeyPayload.appkey.project_id, socket.id);
+      });
+    } catch (e) {
+      logger.error(e);
       socket.disconnect();
       return;
     }
-    logger.info("New Connection", socket.connected);
-    socket.on("search_entities", async (body: string, callback: (f: EntitySearchResponse[]) => void) => {
-      try {
-        const response = await this.entityActionService.searchEntitiesData(JSON.parse(body), appkeyPayload.appkey);
-        callback(response);
-      } catch (e) {
-        logger.error(e);
-      }
-    })
-    socket.on("search_history", async (body: string, callback: (f: EntityHistoryResponse[]) => void) => {
-      try {
-        const response = await this.entityActionService.searchEntitiesHistory(JSON.parse(body), appkeyPayload.appkey);
-        callback(response);
-      } catch (e) {
-        logger.error(e);
-      }
-    })
-    socket.on("actions", async (body: string, callback: (f: EntityActionResponse[]) => void) => {
-      try {
-        const req = JSON.parse(body);
-        const response = await this.entityActionService.entityAction(JSON.parse(body), appkeyPayload.appkey);
-        callback(response);
-        this.connectionManager.emitOnAllConnections(appkeyPayload.appkey.project_id, "server_actions", req, [socket.id]);
-      } catch (e) {
-        logger.error(e);
-      }
-    })
-    socket.emit("connected");
-    this.connectionManager.onConnect(appkeyPayload.appkey.project_id, socket);
-    socket.on("disconnect", () => {
-      this.connectionManager.onDisconnect(appkeyPayload.appkey.project_id, socket.id);
-    });
   }
 }
