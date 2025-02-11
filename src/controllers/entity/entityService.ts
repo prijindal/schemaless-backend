@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { FindOptionsWhere, In, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { FindOptionsWhere, In, LessThanOrEqual, MoreThanOrEqual, Not } from "typeorm";
 import { TypeOrmConnection } from "../../db/typeorm";
 import { AppKey } from "../../entity/app_key.entity";
 import { EntityData } from "../../entity/entity_data.entity";
@@ -33,6 +33,9 @@ export type EntityHistoryRequest = {
   entity_name: string;
   params: {
     created_at?: DateParams
+    host_id?: {
+      ne?: string;
+    }
   };
   order: Record<string, "asc" | "desc">;
 }
@@ -47,6 +50,7 @@ type EntityActionBase = {
   timestamp: Date;
   request_id: string;
   entity_id: string;
+  host_id: string;
 }
 
 type EntityActionCreate = EntityActionBase & {
@@ -125,6 +129,11 @@ export class EntityActionService {
           where.created_at = LessThanOrEqual(entityRequest.params.created_at.lte);
         }
       }
+      if (entityRequest.params.host_id) {
+        if (entityRequest.params.host_id.ne) {
+          where.host_id = Not(entityRequest.params.host_id.ne);
+        }
+      }
       const entityResponse = await this.entityHistoryRepository.getMany(where, { order: entityRequest.order });
       return {
         entity_name: entityRequest.entity_name,
@@ -176,6 +185,7 @@ export class EntityActionService {
           id: entityAction.request_id,
           entity_name: entityAction.entity_name,
           entity_id: entityAction.entity_id,
+          host_id: entityAction.host_id,
           action: entityAction.action,
           payload: entityAction.action === "DELETE" ? {} : entityAction.payload,
           timestamp: entityAction.timestamp,

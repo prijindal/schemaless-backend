@@ -27,6 +27,9 @@ export class EntityHistory {
     id: string; // Request id of the request
 
     @Column({ type: "uuid", nullable: false })
+    host_id: string;
+
+    @Column({ type: "uuid", nullable: false })
     entity_id: string;
 
     @Column({ nullable: false })
