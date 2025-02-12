@@ -11,8 +11,8 @@
     "dev": "ts-node-dev --respawn src/index.ts",
     "generate": "tsoa spec-and-routes -c tsoa-config.json",
     "test": "jest --detectOpenHandles",
-    "docker:start": "docker-compose -f docker-compose.development.yml up -d",
-    "docker:stop": "docker-compose -f docker-compose.development.yml down -v --remove-orphans"
+    "docker:start": "docker-compose up -d",
+    "docker:stop": "docker-compose down -v --remove-orphans"
   },
   "author": "",
   "license": "ISC",

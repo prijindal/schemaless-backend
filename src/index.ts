@@ -14,7 +14,11 @@ import { setup } from "./setup";
 
 
 const server = http.createServer(app);
-const io = new SocketIO.Server(server);
+const io = new SocketIO.Server(server, {
+  cors: {
+    origin: "*",
+  }
+});
 
 io.on("connection", (socket) => iocContainer.get(SocketController).connectionListener(socket));
 
