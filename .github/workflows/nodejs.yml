@@ -86,3 +86,12 @@ jobs:
       - uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Test with junit
+        run: npm run test -- --reporters=jest-junit
+        env:
+          POSTGRES_URI: postgres://schemaless:schemaless@localhost:5432/schemaless
+          REDIS_URI: redis://localhost:6379
+          LOG_LEVEL: info
+      - uses: codecov/test-results-action@v1
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
