@@ -143,11 +143,12 @@ export class EntityActionService {
     return await Promise.all(response);
   }
 
-  async entityAction(body: EntityAction[], appkey: AppKey): Promise<EntityActionResponse[]> {
+  async entityAction(body: EntityAction[], appkey: AppKey): Promise<{ actionResponse: EntityActionResponse[]; historyResponse: EntityHistoryResponse[] }> {
     const response = await this.conn.getInstance().transaction(async (manager) => {
       const entityDataRepository = manager.getRepository(EntityData);
       const entityHistoryRepository = manager.getRepository(EntityHistory);
       const responses: EntityActionResponse[] = [];
+      const historyResponse: EntityHistoryResponse[] = [];
       for (const entityAction of body) {
         let updatedFields = 0;
         if (entityAction.action === "CREATE") {
@@ -179,7 +180,7 @@ export class EntityActionService {
             updatedFields = updatedEntities.affected;
           }
         }
-        await entityHistoryRepository.save({
+        const history = await entityHistoryRepository.save({
           user_id: appkey.user_id,
           project_id: appkey.project_id,
           id: entityAction.request_id,
@@ -190,10 +191,11 @@ export class EntityActionService {
           payload: entityAction.action === "DELETE" ? {} : entityAction.payload,
           timestamp: entityAction.timestamp,
         });
-        const response = { affectedrows: updatedFields, entity_name: entityAction.entity_name };
+        const response: EntityActionResponse = { affectedrows: updatedFields, entity_name: entityAction.entity_name };
+        historyResponse.push({ entity_name: entityAction.entity_name, data: [history] });
         responses.push(response);
       }
-      return responses;
+      return { actionResponse: responses, historyResponse };
     });
     return response;
   }

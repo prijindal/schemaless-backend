@@ -43,10 +43,9 @@ export class SocketController {
       })
       socket.on("actions", async (body: string, callback: (f: EntityActionResponse[]) => void) => {
         try {
-          const req = JSON.parse(body);
           const response = await this.entityActionService.entityAction(JSON.parse(body), appkeyPayload.appkey);
-          callback(response);
-          this.connectionManager.emitOnAllConnections(appkeyPayload.appkey.project_id, "server_actions", req, [socket.id]);
+          callback(response.actionResponse);
+          this.connectionManager.emitOnAllConnections(appkeyPayload.appkey.project_id, "server_actions", response.historyResponse, [socket.id]);
         } catch (e) {
           logger.error(e);
         }
