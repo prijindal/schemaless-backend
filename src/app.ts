@@ -17,6 +17,7 @@ import { TypeOrmConnection } from "./db/typeorm";
 import { CustomError } from "./errors/error";
 import { iocContainer } from "./ioc";
 import { httpLogger, logger } from "./logger";
+import { RedisService } from "./redis";
 
 export const app = express();
 const metricsMiddleware = promBundle({
@@ -93,8 +94,10 @@ app.use(function errorHandler(
 
 export const shutdown = async () => {
   const db = iocContainer.get(TypeOrmConnection).getInstance();
+  const redis = iocContainer.get(RedisService).redis;
   try {
     await db?.destroy();
+    redis.disconnect();
   } catch (err) {
     logger.error(err);
   }
