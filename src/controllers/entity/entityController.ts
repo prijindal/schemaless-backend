@@ -27,7 +27,7 @@ export class EntityController {
 
   @Post("/action")
   async entityAction(@Body() body: EntityAction[], @Request() request: AppKeyAuthorizedRequest): Promise<EntityActionResponse[]> {
-    const res = await this.entityActionService.entityAction(body, request.appkey);
-    return res.actionResponse;
+    return this.entityActionService.entityAction(body, request.appkey);
+
   }
 }

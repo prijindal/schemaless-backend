@@ -9,6 +9,7 @@ const config = {
   testMatch: ["**/test/**/*.test.(ts|js)", "**/src/**/*.test.(ts|js)"],
   testEnvironment: "node",
   collectCoverage: true,
+  maxWorkers: 1
 };
 
 // eslint-disable-next-line no-undef

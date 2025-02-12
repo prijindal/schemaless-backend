@@ -7,7 +7,7 @@ import axios from "axios";
 import { random } from "lodash";
 import { bootstrap, shutdownTestServer } from "./helpers/bootstrap";
 
-describe("Health API", () => {
+describe("Registration API", () => {
   let server: http.Server;
   const port = random(1025, 2000);
   beforeAll((done) => {
@@ -19,10 +19,16 @@ describe("Health API", () => {
 
   const host = `http://localhost:${port}`;
 
-  it("Check health", async () => {
-    const response = await axios.get(`${host}/health`);
+  it("Creates an admin user and check if verify auth works", async () => {
+    const response = await axios.post(`${host}/user/login/initialize`, {
+      username: "admin",
+      password: "admin",
+      validateStatus: (status: number) => status > 100,
+    });
+
     expect(response.status).toEqual(200);
-  });
+    expect(response.data).toEqual(true);
+  })
 
   afterAll(async () => {
     await shutdownTestServer(server);
