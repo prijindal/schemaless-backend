@@ -10,6 +10,7 @@ import { UserAuthService } from "./auth.user.service";
 export async function expressAuthentication(
   request: Request,
   securityName: "bearer_appkey" | "bearer_auth",
+  scopes: string[]
 ): Promise<{ status?: string }> {
   if (securityName === "bearer_appkey") {
     try {
@@ -34,6 +35,9 @@ export async function expressAuthentication(
       const user = await userAuthService.verifyToken(token);
       if (user == null) {
         throw new InvalidCredentialsError("Invalid jwt token");
+      }
+      if (scopes.indexOf("admin") >= 0 && user.is_admin == false) {
+        throw new InvalidCredentialsError("Admin APIs are only accessible by admin users");
       }
       (request as UserAuthorizedRequest).loggedInUser = user;
       return Promise.resolve({});

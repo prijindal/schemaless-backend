@@ -39,6 +39,7 @@ export class UserAdminController {
   async listUsers() {
     const users = await this.userRepository.getMany({});
     return users.map((user) => ({
+      id: user.id,
       username: user.username,
       created_at: user.created_at,
       status: user.status,

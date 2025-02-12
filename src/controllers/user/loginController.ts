@@ -29,7 +29,7 @@ export class UserLoginController {
 	@Post("/login")
 	async loginUser(@Body() body: UserLoginRequest) {
 		const user = await this.userRepository.getOne({ username: body.username });
-		if (user == null) {
+		if (user == null || user.status != UserStatus.ACTIVATED) {
 			throw new InvalidCredentialsError("Invalid username or password");
 		}
 		const matched = await bcrypt.compare(body.password, user.bcrypt_hash);
