@@ -1,10 +1,9 @@
 import { inject } from "inversify";
 import { RedisService } from "../redis";
 import { singleton } from "../singleton";
-import { CacheImplementation } from "./base";
 
 @singleton(CacheService)
-export class CacheService implements CacheImplementation {
+export class CacheService {
   constructor(@inject(RedisService) private redisService: RedisService) { }
 
 

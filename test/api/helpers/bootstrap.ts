@@ -1,4 +1,8 @@
 import http from "http";
+import SocketIO from "socket.io";
+
+import { SocketController } from '../../../src/socket/socket.service';
+
 import { app, shutdown } from "../../../src/app";
 import { TypeOrmConnection } from "../../../src/db/typeorm";
 import { options } from "../../../src/db/typeorm_options";
@@ -12,6 +16,12 @@ export const bootstrap = async ({
 }) => {
   const server = http.createServer(app);
   await setup(options);
+  const io = new SocketIO.Server(server, {
+    cors: {
+      origin: "*",
+    }
+  });
+  io.on("connection", (socket) => iocContainer.get(SocketController).connectionListener(socket));
   return server.listen(port);
 };
 
