@@ -3,8 +3,8 @@ import { Get, Request, Route, Security, Tags } from "tsoa";
 import { User } from "../../entity/user.entity";
 import { AppKeyAuthorizedRequest, UserAuthorizedRequest } from "../../types/auth.types";
 
-type UserVerifyResponse = Pick<User, "username" | "created_at" | "status" | "is_admin">;
-type AppKeyVerifyResponse = {
+interface UserVerifyResponse extends Pick<User, "username" | "created_at" | "status" | "is_admin"> { };
+interface AppKeyVerifyResponse {
   id: string;
   project_name: string;
 }

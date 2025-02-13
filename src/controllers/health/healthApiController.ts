@@ -41,7 +41,7 @@ export class HealthController {
         "LOG_LEVEL": process.env.LOG_LEVEL,
         "REQUEST_TRACING": process.env.REQUEST_TRACING,
         "LOG_FORMATTER": process.env.LOG_FORMATTER,
-      },
+      } as Record<string, string | undefined>,
     };
   }
 }

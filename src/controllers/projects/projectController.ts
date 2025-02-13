@@ -6,8 +6,8 @@ import { AlreadyExistsError, NotExistsError } from "../../errors/error";
 import { ProjectRepository } from "../../repositories/project.repository";
 import { UserAuthorizedRequest } from "../../types/auth.types";
 
-type CreateProjectRequest = Pick<Project, "name">
-type EditProjectRequest = Pick<Project, "name">
+interface CreateProjectRequest extends Pick<Project, "name"> { }
+interface EditProjectRequest extends Pick<Project, "name"> { }
 
 @Tags("project")
 @Route("/projects")

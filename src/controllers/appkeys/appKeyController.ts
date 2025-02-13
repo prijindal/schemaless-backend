@@ -8,7 +8,7 @@ import { AppKeyRepository } from "../../repositories/app_key.repository";
 import { ProjectRepository } from "../../repositories/project.repository";
 import { UserAuthorizedRequest } from "../../types/auth.types";
 
-type CreateAppKeyRequest = Pick<AppKey, "project_id">
+interface CreateAppKeyRequest extends Pick<AppKey, "project_id"> { }
 
 @Tags("appkeys")
 @Route("/appkeys")
