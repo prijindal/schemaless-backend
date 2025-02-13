@@ -14,6 +14,9 @@ type DateParams = {
   lte?: Date;
 }
 
+enum EntityHistoryRequestOrderEnum { "asc", "desc" };
+enum EntitySearchRequestOrderEnum { "asc", "desc" };
+
 export interface EntitySearchRequest {
   entity_name: string;
   params: {
@@ -21,7 +24,7 @@ export interface EntitySearchRequest {
     created_at?: DateParams
     ids?: string[];
   };
-  order: Record<string, "asc" | "desc">;
+  order: Record<string, EntitySearchRequestOrderEnum>;
 }
 
 export type EntitySearchResponse = {
@@ -37,7 +40,7 @@ export type EntityHistoryRequest = {
       ne?: string;
     }
   };
-  order: Record<string, "asc" | "desc">;
+  order: Record<string, EntityHistoryRequestOrderEnum>;
 }
 
 export type EntityHistoryResponse = {
