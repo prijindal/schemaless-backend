@@ -10,12 +10,6 @@
     "outputDirectory": "src/build",
     "specVersion": 3,
     "securityDefinitions": {
-      "bearer_appkey": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "For use from specifc apps under a user"
-      },
       "bearer_auth": {
         "type": "http",
         "scheme": "bearer",

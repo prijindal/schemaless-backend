@@ -64,14 +64,14 @@ export class EntityActionService {
     @inject(EntityHistoryRepository) private entityHistoryRepository: EntityHistoryRepository,
   ) { }
 
-  async getEntities(project_id: string) {
-    return this.entityHistoryRepository.distinct({project_id: project_id}, "entity_name") as Promise<string[]>;
+  async getEntities(user_id: string) {
+    return this.entityHistoryRepository.distinct({user_id: user_id}, "entity_name") as Promise<string[]>;
   }
 
-  async searchEntitiesHistory(body: EntityHistoryRequest[], project_id: string) {
+  async searchEntitiesHistory(body: EntityHistoryRequest[], user_id: string) {
     const response = body.map(async (entityRequest): Promise<EntityHistoryResponse> => {
       const where: FindOptionsWhere<EntityHistory> = {
-        project_id: project_id,
+        user_id: user_id,
         entity_name: entityRequest.entity_name,
       };
       if (entityRequest.params.created_at) {
@@ -95,13 +95,13 @@ export class EntityActionService {
     return await Promise.all(response);
   }
 
-  async entityAction(body: EntityAction[], project_id: string): Promise<EntityActionResponse[]> {
+  async entityAction(body: EntityAction[], user_id: string): Promise<EntityActionResponse[]> {
     const response = await this.conn.getInstance().transaction(async (manager) => {
       const entityHistoryRepository = manager.getRepository(EntityHistory);
       const responses: EntityActionResponse[] = [];
       for (const entityAction of body) {
         await entityHistoryRepository.save({
-          project_id: project_id,
+          user_id: user_id,
           id: entityAction.request_id,
           entity_name: entityAction.entity_name,
           entity_id: entityAction.entity_id,

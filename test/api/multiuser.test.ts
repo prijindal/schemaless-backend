@@ -62,9 +62,9 @@ describe("Multi User API", () => {
     }
 
     expect(loginResponse).not.toBeUndefined();
-    expect(loginResponse!.status).toEqual(403);
+    expect(loginResponse!.status).toEqual(401);
 
-    expect(loginResponse!.data.class_name).toEqual("InvalidCredentialsError");
+    expect(loginResponse!.data.class_name).toEqual("UserUnauthorizedError");
   });
 
   it("List users using admin token", async () => {

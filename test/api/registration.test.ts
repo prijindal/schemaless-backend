@@ -20,7 +20,6 @@ describe("Registration API", () => {
 
   const host = `http://localhost:${port}`;
   let jwtToken: string | undefined;
-  let projectId: string | undefined;
   let appKey: string | undefined;
 
   it("Creates an admin user", async () => {
@@ -55,36 +54,8 @@ describe("Registration API", () => {
     expect(response.data.status).toEqual("ACTIVATED");
   })
 
-  it("create a project", async () => {
-    const response = await axios.post(`${host}/projects`, {
-      name: "test",
-    }, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        "accept": "application/json",
-      }
-    });
-
-    expect(response.status).toEqual(200);
-    expect(response.data.name).toEqual("test");
-  });
-
-  it("lists project and verifies that project is created", async () => {
-    const response = await axios.get(`${host}/projects`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        "accept": "application/json",
-      }
-    });
-
-    expect(response.status).toEqual(200);
-    expect(response.data.length).toEqual(1);
-    expect(response.data[0].name).toEqual("test");
-    projectId = response.data[0].id;
-  });
-
   it("creates a new appkey", async () => {
-    const response = await axios.post(`${host}/projects/${projectId}/generatekey`, {}, {
+    const response = await axios.post(`${host}/auth/generatekey`, {}, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
         "accept": "application/json",
@@ -96,7 +67,7 @@ describe("Registration API", () => {
   });
 
   it("verifies the appkey", async () => {
-    const response = await axios.get(`${host}/auth/appkey`, {
+    const response = await axios.get(`${host}/auth/user`, {
       headers: {
         Authorization: `Bearer ${appKey}`,
         "accept": "application/json",
@@ -104,7 +75,7 @@ describe("Registration API", () => {
     });
 
     expect(response.status).toEqual(200);
-    expect(response.data.project_name).toEqual("test");
+    expect(response.data.username).toEqual("admin");
   });
 
   it("performs some server actions with the appkey", async () => {
@@ -157,7 +128,7 @@ describe("Registration API", () => {
   });
 
   it("verifies get entity names for that project and jwt key", async () => {
-    const response = await axios.get(`${host}/projects/${projectId}/history/entities`, {
+    const response = await axios.get(`${host}/entity/history/entities`, {
       headers: {
         "Authorization": `Bearer ${jwtToken}`,
       }

@@ -11,16 +11,17 @@ export class UserAuthService {
   constructor(@inject(UserRepository) private userRepository: UserRepository,
   ) { }
 
-  async generateToken(user: User) {
-    const expiry_timestamp = 30 * 24 * 60 * 60; // 30 days
+  async generateToken(user: User, longLived:boolean = false) {
+    const options: jwt.SignOptions = {};
+    if(!longLived) {
+      options.expiresIn = 30 * 24 * 60 * 60;
+    }
     const payload: UserJwtPayload = {
       user_id: user.id,
       token: user.token,
       type: "user",
     };
-    const jwtToken = jwt.sign(payload, JWT_SECRET, {
-      expiresIn: expiry_timestamp,
-    });
+    const jwtToken = jwt.sign(payload, JWT_SECRET, options);
     return jwtToken;
   }
 

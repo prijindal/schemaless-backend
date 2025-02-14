@@ -6,7 +6,6 @@ import { PinoTypeormLogger } from "./typeorm_logger";
 
 import { AUTO_MIGRATION, LOG_LEVEL, POSTGRES_URI } from "../config";
 import { EntityHistory } from "../entity/entity_history.entity";
-import { Project } from "../entity/project.entity";
 import { User } from "../entity/user.entity";
 
 const logLevelMap: { [k: string]: LoggerOptions } = {
@@ -24,7 +23,6 @@ const typeOrmLogging: LoggerOptions = logLevelMap[LOG_LEVEL] || [
 export const baseDbOptions: Omit<BaseDataSourceOptions, "type"> = {
   entities: [
     User,
-    Project,
     EntityHistory,
   ],
   synchronize: AUTO_MIGRATION,

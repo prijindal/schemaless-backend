@@ -1,33 +1,26 @@
+import { randomUUID } from "crypto";
+import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { Get, Request, Route, Security, Tags } from "tsoa";
+import { Get, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
+import { UserAuthService } from "../../auth/auth.user.service";
 import { User } from "../../entity/user.entity";
-import { AppKeyAuthorizedRequest, UserAuthorizedRequest } from "../../types/auth.types";
+import { NotExistsError } from "../../errors/error";
+import { UserRepository } from "../../repositories/user.repository";
+import { UserAuthorizedRequest } from "../../types/auth.types";
 
 interface UserVerifyResponse extends Pick<User, "username" | "created_at" | "status" | "is_admin"> { };
-interface AppKeyVerifyResponse {
-  project_id: string;
-  project_name: string;
-}
 
 @Tags("auth")
 @Route("/auth")
+@Security("bearer_auth")
 @provide(AuthVerifyController)
 export class AuthVerifyController {
   constructor(
+    @inject(UserAuthService) private userAuthService: UserAuthService,
+    @inject(UserRepository) private userRepository: UserRepository,
   ) { }
 
-  @Get("/appkey")
-  @Security("bearer_appkey")
-  async verifyAppKey(@Request() request: AppKeyAuthorizedRequest): Promise<AppKeyVerifyResponse> {
-    const project = request.project;
-    return {
-      project_id: project.id,
-      project_name: project.name,
-    };
-  }
-
   @Get("/user")
-  @Security("bearer_auth")
   async verifyUserAuth(@Request() request: UserAuthorizedRequest): Promise<UserVerifyResponse> {
     const user = request.loggedInUser;
     return {
@@ -36,5 +29,24 @@ export class AuthVerifyController {
       status: user.status,
       is_admin: user.is_admin,
     }
+  }
+
+  @Post("generatekey")
+  @SuccessResponse(200)
+  async generateKey(@Request() request: UserAuthorizedRequest) {
+    const token = await this.userAuthService.generateToken(request.loggedInUser, true);
+    return token;
+  }
+
+  @Post("revokekeys")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
+  async revokeKeys(@Request() request: UserAuthorizedRequest) {
+    await this.userRepository.update({ id: request.loggedInUser.id }, { token: randomUUID() });
+    const updatedUser = await this.userRepository.getOne({ id: request.loggedInUser.id, });
+    if (updatedUser == null) {
+      throw new NotExistsError("User not found");
+    }
+    return updatedUser;
   }
 }

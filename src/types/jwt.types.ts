@@ -3,9 +3,3 @@ export type JwtPayload = {
   user_id: string;
   token: string;
 }
-
-export type ProjectJwtPayload = {
-  type: "project";
-  project_id: string;
-  token: string;
-}
