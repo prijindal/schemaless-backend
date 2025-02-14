@@ -5,7 +5,7 @@ import { provide } from "inversify-binding-decorators";
 import { Body, Post, Response, Route, SuccessResponse, Tags } from "tsoa";
 import { UserAuthService } from "../../auth/auth.user.service";
 import { UserStatus } from "../../entity/user.entity";
-import { InvalidCredentialsError } from "../../errors/error";
+import { InvalidCredentialsError, UserUnauthorizedError } from "../../errors/error";
 import { UserRepository } from "../../repositories/user.repository";
 
 interface UserLoginRequest {
@@ -23,21 +23,27 @@ export class UserLoginController {
 	) { }
 
 	/**
-	 * 
+	 * Checks username and password and generate a jwt token
 	 * @param body username and password
-	 * @returns jwtToken
+	 * @returns token if user is authenticated
+	 * @throws {InvalidCredentialsError} if user doesn't exist or password doesn't match
+	 * @throws {UserUnauthorizedError} if user is not activated
 	 */
 	@Post("/login")
+	@Response<UserUnauthorizedError>(UserUnauthorizedError.status_code)
 	@Response<InvalidCredentialsError>(InvalidCredentialsError.status_code)
 	@SuccessResponse(200)
 	async loginUser(@Body() body: UserLoginRequest) {
 		const user = await this.userRepository.getOne({ username: body.username });
-		if (user == null || user.status != UserStatus.ACTIVATED) {
+		if (user == null) {
 			throw new InvalidCredentialsError("Invalid username or password");
 		}
 		const matched = await bcrypt.compare(body.password, user.bcrypt_hash);
 		if (matched == null) {
 			throw new InvalidCredentialsError("Invalid username or password");
+		}
+		if (user.status != UserStatus.ACTIVATED) {
+			throw new UserUnauthorizedError("User not activated");
 		}
 		return this.userAuthService.generateToken(user);
 	}
