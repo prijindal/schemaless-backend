@@ -11,9 +11,9 @@ export class UserAuthService {
   constructor(@inject(UserRepository) private userRepository: UserRepository,
   ) { }
 
-  async generateToken(user: User, longLived:boolean = false) {
+  async generateToken(user: User, longLived: boolean = false) {
     const options: jwt.SignOptions = {};
-    if(!longLived) {
+    if (!longLived) {
       options.expiresIn = 30 * 24 * 60 * 60;
     }
     const payload: UserJwtPayload = {
@@ -35,7 +35,7 @@ export class UserAuthService {
     if (payload == null || payload.type != "user") {
       return null;
     }
-    const user = await this.userRepository.getOne({ id: payload.user_id });
+    const user = await this.userRepository.getOne({ id: payload.user_id, token: payload.token });
     if (user == null || user.status != "ACTIVATED") {
       return null;
     }
