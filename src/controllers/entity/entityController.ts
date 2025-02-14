@@ -1,7 +1,6 @@
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Body, Post, Request, Route, Security, Tags } from "tsoa";
-import { EntityHistoryRepository } from "../../repositories/entity_history.repository";
 import { AppKeyAuthorizedRequest } from "../../types/auth.types";
 import { EntityAction, EntityActionResponse, EntityActionService, EntityHistoryRequest, EntityHistoryResponse } from "./entityService";
 
@@ -12,7 +11,6 @@ import { EntityAction, EntityActionResponse, EntityActionService, EntityHistoryR
 export class EntityController {
   constructor(
     @inject(EntityActionService) private entityActionService: EntityActionService,
-    @inject(EntityHistoryRepository) private entityHistoryRepository: EntityHistoryRepository,
   ) { }
 
   @Post("/history/search")

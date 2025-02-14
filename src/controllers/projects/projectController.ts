@@ -7,6 +7,7 @@ import { Project } from "../../entity/project.entity";
 import { AlreadyExistsError, NotExistsError } from "../../errors/error";
 import { ProjectRepository } from "../../repositories/project.repository";
 import { UserAuthorizedRequest } from "../../types/auth.types";
+import { EntityActionService, EntityHistoryRequest, EntityHistoryResponse } from "../entity/entityService";
 
 interface CreateProjectRequest extends Pick<Project, "name"> { }
 interface EditProjectRequest extends Pick<Project, "name"> { }
@@ -19,6 +20,7 @@ export class ProjectController {
   constructor(
     @inject(ProjectRepository) private projectRepository: ProjectRepository,
     @inject(AppKeyAuthService) private appKeyAuthService: AppKeyAuthService,
+    @inject(EntityActionService) private entityActionService: EntityActionService,
   ) { }
 
   @Get("")
@@ -102,4 +104,15 @@ export class ProjectController {
     await this.projectRepository.delete(projectid);
     return project;
   }
+  
+    @Post("/:projectid/history/search")
+    @Response<NotExistsError>(NotExistsError.status_code)
+    @SuccessResponse(200)
+    async searchProjectEntitiesHistory(@Path("projectid") projectid: string, @Body() body: EntityHistoryRequest[], @Request() request: UserAuthorizedRequest): Promise<EntityHistoryResponse[]> {
+      const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
+      if (project == null) {
+        throw new NotExistsError("Project not found");
+      }
+      return this.entityActionService.searchEntitiesHistory(body, project.id);
+    }
 }
