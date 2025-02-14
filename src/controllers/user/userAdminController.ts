@@ -1,6 +1,6 @@
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { Body, Delete, Get, Path, Post, Route, Security, Tags } from "tsoa";
+import { Body, Delete, Get, Path, Post, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import { UserStatus } from "../../entity/user.entity";
 import { NotExistsError } from "../../errors/error";
 import { UserRepository } from "../../repositories/user.repository";
@@ -15,6 +15,8 @@ export class UserAdminController {
   ) { }
 
   @Post("/:userid/approval")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
   async userApproval(@Path("userid") userid: string, @Body() body: { approval: boolean }) {
     const user = await this.userRepository.getOne({ id: userid });
     if (user == null) {
@@ -26,6 +28,8 @@ export class UserAdminController {
   }
 
   @Delete("/:userid")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
   async deleteUser(@Path() userid: string) {
     const user = await this.userRepository.getOne({ id: userid });
     if (user == null) {

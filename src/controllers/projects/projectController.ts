@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { Body, Delete, Get, Path, Post, Request, Route, Security, Tags } from "tsoa";
+import { Body, Delete, Get, Path, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import { AppKeyAuthService } from "../../auth/appkey.user.service";
 import { Project } from "../../entity/project.entity";
 import { AlreadyExistsError, NotExistsError } from "../../errors/error";
@@ -28,6 +28,8 @@ export class ProjectController {
   }
 
   @Post("")
+  @Response<AlreadyExistsError>(AlreadyExistsError.status_code)
+  @SuccessResponse(200)
   async createProjects(@Body() body: CreateProjectRequest, @Request() request: UserAuthorizedRequest): Promise<Project> {
     const exisingProject = await this.projectRepository.getOne({ name: body.name, user_id: request.loggedInUser.id });
     if (exisingProject != null) {
@@ -42,6 +44,8 @@ export class ProjectController {
   }
 
   @Post(":projectid/generatekey")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
   async generateKey(@Path("projectid") projectid: string, @Request() request: UserAuthorizedRequest) {
     const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
     if (project == null) {
@@ -52,6 +56,8 @@ export class ProjectController {
   }
 
   @Post(":projectid/revokekeys")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
   async revokeKeys(@Path("projectid") projectid: string, @Request() request: UserAuthorizedRequest) {
     const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
     if (project == null) {
@@ -66,6 +72,8 @@ export class ProjectController {
   }
 
   @Post(":projectid")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
   async editProject(@Path("projectid") projectid: string, @Body() body: EditProjectRequest, @Request() request: UserAuthorizedRequest): Promise<Project> {
     const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
     if (project == null) {
@@ -84,6 +92,8 @@ export class ProjectController {
   }
 
   @Delete(":projectid")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
   async deleteProject(@Path("projectid") projectid: string, @Request() request: UserAuthorizedRequest): Promise<Project> {
     const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
     if (project == null) {
