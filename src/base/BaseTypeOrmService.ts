@@ -65,6 +65,11 @@ export abstract class BaseTypeOrmService<T extends { id: string }> {
     return await this.model.find({ where, select, order });
   }
 
+  async distinct(where: FindOptionsWhere<T>, column: keyof T):Promise<T[keyof T][]> {
+    const a = await this.model.createQueryBuilder().where(where).distinctOn([column.toString()]).getMany();
+    return a.map(a => a[column]);
+  }
+
   async getById(id: string): Promise<T | null> {
     try {
       return this.model.findOneBy({ id: id as any });

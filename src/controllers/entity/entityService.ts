@@ -64,6 +64,10 @@ export class EntityActionService {
     @inject(EntityHistoryRepository) private entityHistoryRepository: EntityHistoryRepository,
   ) { }
 
+  async getEntities(project_id: string) {
+    return this.entityHistoryRepository.distinct({project_id: project_id}, "entity_name") as Promise<string[]>;
+  }
+
   async searchEntitiesHistory(body: EntityHistoryRequest[], project_id: string) {
     const response = body.map(async (entityRequest): Promise<EntityHistoryResponse> => {
       const where: FindOptionsWhere<EntityHistory> = {

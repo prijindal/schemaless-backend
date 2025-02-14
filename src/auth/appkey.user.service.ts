@@ -19,6 +19,7 @@ export class AppKeyAuthService {
     const payload:ProjectJwtPayload = {
       project_id: project.id,
       token: project.token,
+      type: "project"
     }
     const jwtToken = jwt.sign(payload, JWT_SECRET);
     return jwtToken;
@@ -31,7 +32,7 @@ export class AppKeyAuthService {
    */
   async verifyToken(jwtToken: string): Promise<{ user: User; project: Project } | null> {
     const payload = jwt.verify(jwtToken, JWT_SECRET) as ProjectJwtPayload;
-    if (payload == null) {
+    if (payload == null || payload.type != "project") {
       return null;
     }
     const project = await this.projectRepository.getOne({ id: payload.project_id });

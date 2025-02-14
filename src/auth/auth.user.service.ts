@@ -16,6 +16,7 @@ export class UserAuthService {
     const payload: UserJwtPayload = {
       user_id: user.id,
       token: user.token,
+      type: "user",
     };
     const jwtToken = jwt.sign(payload, JWT_SECRET, {
       expiresIn: expiry_timestamp,
@@ -30,7 +31,7 @@ export class UserAuthService {
    */
   async verifyToken(jwtToken: string): Promise<User | null> {
     const payload = jwt.verify(jwtToken, JWT_SECRET) as UserJwtPayload;
-    if (payload == null) {
+    if (payload == null || payload.type != "user") {
       return null;
     }
     const user = await this.userRepository.getOne({ id: payload.user_id });

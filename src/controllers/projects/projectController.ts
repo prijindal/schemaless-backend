@@ -105,14 +105,25 @@ export class ProjectController {
     return project;
   }
   
-    @Post("/:projectid/history/search")
-    @Response<NotExistsError>(NotExistsError.status_code)
-    @SuccessResponse(200)
-    async searchProjectEntitiesHistory(@Path("projectid") projectid: string, @Body() body: EntityHistoryRequest[], @Request() request: UserAuthorizedRequest): Promise<EntityHistoryResponse[]> {
-      const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
-      if (project == null) {
-        throw new NotExistsError("Project not found");
-      }
-      return this.entityActionService.searchEntitiesHistory(body, project.id);
+  @Get("/:projectid/history/entities")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
+  async getProjectEntities(@Path("projectid") projectid: string, @Request() request: UserAuthorizedRequest): Promise<string[]> {
+    const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
+    if (project == null) {
+      throw new NotExistsError("Project not found");
     }
+    return this.entityActionService.getEntities(project.id);
+  }
+  
+  @Post("/:projectid/history/search")
+  @Response<NotExistsError>(NotExistsError.status_code)
+  @SuccessResponse(200)
+  async searchProjectEntitiesHistory(@Path("projectid") projectid: string, @Body() body: EntityHistoryRequest[], @Request() request: UserAuthorizedRequest): Promise<EntityHistoryResponse[]> {
+    const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
+    if (project == null) {
+      throw new NotExistsError("Project not found");
+    }
+    return this.entityActionService.searchEntitiesHistory(body, project.id);
+  }
 }

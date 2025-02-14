@@ -156,6 +156,17 @@ describe("Registration API", () => {
     expect(response.data[0].data[0].payload.title).toEqual("Some task");
   });
 
+  it("verifies get entity names for that project and jwt key", async () => {
+    const response = await axios.get(`${host}/projects/${projectId}/history/entities`, {
+      headers: {
+        "Authorization": `Bearer ${jwtToken}`,
+      }
+    })
+
+    expect(response.status).toEqual(200);
+    expect(response.data).toStrictEqual(["todo"]);
+  })
+
   afterAll(async () => {
     await shutdownTestServer(server);
   });

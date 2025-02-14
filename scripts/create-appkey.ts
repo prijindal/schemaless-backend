@@ -21,6 +21,7 @@ const main = async () => {
     password: credentials.password,
   }, { headers: { "Content-Type": "application/json" } });
   const jwtToken = response.data;
+  console.log(jwtToken);
 
   const projectResponse = await axios.post(`${url}/projects`, { "name": "todos" }, { headers: { "Authorization": `Bearer ${jwtToken}`, "Content-Type": "application/json" } });
 
@@ -29,7 +30,7 @@ const main = async () => {
   console.log(project_id);
 
 
-  const appKeyResponse = await axios.post(`${url}/appkeys`, { "project_id": project_id }, { headers: { "Authorization": `Bearer ${jwtToken}`, "Content-Type": "application/json" } });
+  const appKeyResponse = await axios.post(`${url}/projects/${project_id}/generatekey`, {  }, { headers: { "Authorization": `Bearer ${jwtToken}`, "Content-Type": "application/json" } });
 
   console.log(appKeyResponse.data);
 };
