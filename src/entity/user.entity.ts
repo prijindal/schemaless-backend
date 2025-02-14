@@ -19,6 +19,9 @@ export class User {
   @Column()
   public bcrypt_hash: string; // Encrypted password
 
+  @Column("uuid")
+  public token: string; // Token which is added in jwt, this is used for revoking generated jwts by resetting this field
+
   @Column({ type: "enum", enum: UserStatus })
   public status: UserStatus;
 

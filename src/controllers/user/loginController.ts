@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { randomUUID } from "crypto";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Body, Post, Route, Tags } from "tsoa";
@@ -60,9 +61,12 @@ export class UserLoginController {
 			bcrypt_hash: await bcrypt.hash(body.password, 10),
 			is_admin: false,
 			status: UserStatus.PENDING_VERIFICATION,
+			token: randomUUID()
 		});
 		return true;
 	}
+
+	// TODO: Add an API for revoking user token
 
 	/**
 	 * Check if any admin user is available
@@ -83,6 +87,7 @@ export class UserLoginController {
 			bcrypt_hash: await bcrypt.hash(body.password, 10),
 			is_admin: true,
 			status: UserStatus.ACTIVATED,
+			token: randomUUID()
 		});
 		return true;
 	}

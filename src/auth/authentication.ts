@@ -22,7 +22,6 @@ export async function expressAuthentication(
       }
       (request as AppKeyAuthorizedRequest).loggedInUser = appkeyPayload.user;
       (request as AppKeyAuthorizedRequest).project = appkeyPayload.project;
-      (request as AppKeyAuthorizedRequest).appkey = appkeyPayload.appkey;
       return Promise.resolve({});
     } catch (e) {
       logger.error(e);

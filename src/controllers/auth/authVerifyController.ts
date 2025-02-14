@@ -5,7 +5,7 @@ import { AppKeyAuthorizedRequest, UserAuthorizedRequest } from "../../types/auth
 
 interface UserVerifyResponse extends Pick<User, "username" | "created_at" | "status" | "is_admin"> { };
 interface AppKeyVerifyResponse {
-  id: string;
+  project_id: string;
   project_name: string;
 }
 
@@ -20,9 +20,8 @@ export class AuthVerifyController {
   @Security("bearer_appkey")
   async verifyAppKey(@Request() request: AppKeyAuthorizedRequest): Promise<AppKeyVerifyResponse> {
     const project = request.project;
-    const appkey = request.appkey;
     return {
-      id: appkey.id,
+      project_id: project.id,
       project_name: project.name,
     };
   }

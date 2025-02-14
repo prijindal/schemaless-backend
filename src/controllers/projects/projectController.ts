@@ -1,6 +1,8 @@
+import { randomUUID } from "crypto";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Body, Delete, Get, Path, Post, Request, Route, Security, Tags } from "tsoa";
+import { AppKeyAuthService } from "../../auth/appkey.user.service";
 import { Project } from "../../entity/project.entity";
 import { AlreadyExistsError, NotExistsError } from "../../errors/error";
 import { ProjectRepository } from "../../repositories/project.repository";
@@ -16,6 +18,7 @@ interface EditProjectRequest extends Pick<Project, "name"> { }
 export class ProjectController {
   constructor(
     @inject(ProjectRepository) private projectRepository: ProjectRepository,
+    @inject(AppKeyAuthService) private appKeyAuthService: AppKeyAuthService,
   ) { }
 
   @Get("")
@@ -33,8 +36,33 @@ export class ProjectController {
     const newProject = await this.projectRepository.create({
       name: body.name,
       user_id: request.loggedInUser.id,
+      token: randomUUID(),
     });
     return newProject;
+  }
+
+  @Post(":projectid/generatekey")
+  async generateKey(@Path("projectid") projectid: string, @Request() request: UserAuthorizedRequest) {
+    const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
+    if (project == null) {
+      throw new NotExistsError("Project not found");
+    }
+    const token = await this.appKeyAuthService.generateToken(project);
+    return token;
+  }
+
+  @Post(":projectid/revokekeys")
+  async revokeKeys(@Path("projectid") projectid: string, @Request() request: UserAuthorizedRequest) {
+    const project = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
+    if (project == null) {
+      throw new NotExistsError("Project not found");
+    }
+    await this.projectRepository.update({ id: projectid }, { token: randomUUID() });
+    const updatedproject = await this.projectRepository.getOne({ id: projectid, user_id: request.loggedInUser.id });
+    if (updatedproject == null) {
+      throw new NotExistsError("Project not found");
+    }
+    return updatedproject;
   }
 
   @Post(":projectid")

@@ -84,9 +84,7 @@ describe("Registration API", () => {
   });
 
   it("creates a new appkey", async () => {
-    const response = await axios.post(`${host}/appkeys`, {
-      project_id: projectId,
-    }, {
+    const response = await axios.post(`${host}/projects/${projectId}/generatekey`, {}, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
         "accept": "application/json",
@@ -132,30 +130,6 @@ describe("Registration API", () => {
     });
 
     expect(response.status).toEqual(200);
-  });
-
-  it("verifies the entity data from that appkey", async () => {
-    const response = await axios.post(`${host}/entity/data/search`, [
-      {
-        "entity_name": "todo",
-        "params": {},
-        "order": {
-          "updated_at": "asc"
-        }
-      }
-    ], {
-      headers: {
-        Authorization: `Bearer ${appKey}`,
-        "accept": "application/json",
-        "Content-Type": "application/json",
-      }
-    });
-
-    expect(response.status).toEqual(200);
-    expect(response.data.length).toEqual(1);
-    expect(response.data[0].entity_name).toEqual("todo");
-    expect(response.data[0].data.length).toEqual(1);
-    expect(response.data[0].data[0].content.title).toEqual("Some task");
   });
 
   it("verifies the entity history from that appkey", async () => {

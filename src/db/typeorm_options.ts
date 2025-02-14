@@ -5,8 +5,6 @@ import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConne
 import { PinoTypeormLogger } from "./typeorm_logger";
 
 import { AUTO_MIGRATION, LOG_LEVEL, POSTGRES_URI } from "../config";
-import { AppKey } from "../entity/app_key.entity";
-import { EntityData } from "../entity/entity_data.entity";
 import { EntityHistory } from "../entity/entity_history.entity";
 import { Project } from "../entity/project.entity";
 import { User } from "../entity/user.entity";
@@ -27,8 +25,6 @@ export const baseDbOptions: Omit<BaseDataSourceOptions, "type"> = {
   entities: [
     User,
     Project,
-    AppKey,
-    EntityData,
     EntityHistory,
   ],
   synchronize: AUTO_MIGRATION,

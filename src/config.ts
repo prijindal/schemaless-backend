@@ -11,7 +11,6 @@ export const LOG_LEVEL = !isEmpty(process.env.LOG_LEVEL)
 
 
 export const POSTGRES_URI = process.env.POSTGRES_URI;
-export const REDIS_URI = process.env.REDIS_URI || "redis://localhost:6379";
 
 
 export const REQUEST_TRACING = process.env.REQUEST_TRACING === "true";

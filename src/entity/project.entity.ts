@@ -11,6 +11,9 @@ export class Project {
     @Column()
     public name: string;
 
+    @Column("uuid")
+    public token: string; // Token which is added in jwt, this is used for revoking generated jwts by resetting this field
+
     @Column()
     user_id: string;
 

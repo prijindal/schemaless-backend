@@ -2,7 +2,6 @@ import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import os from "os";
 import { Get, Route, Tags } from "tsoa";
-import { CacheService } from "../../cache";
 import { TypeOrmConnection } from "../../db/typeorm";
 
 @Tags("health")
@@ -11,7 +10,6 @@ import { TypeOrmConnection } from "../../db/typeorm";
 export class HealthController {
   constructor(
     @inject(TypeOrmConnection) private typeOrmConnection: TypeOrmConnection,
-    @inject(CacheService) private cacheService: CacheService,
   ) { }
 
   @Get("/health")
@@ -24,11 +22,9 @@ export class HealthController {
   @Get("/cumulative/health")
   async getCumulativeHealth() {
     const db = this.typeOrmConnection.getInstance();
-    const cacheHealth = await this.cacheService.health();
     return {
       healthy: true,
       db: db != null ? db.isInitialized : false,
-      cache: cacheHealth,
       os: {
         hostname: os.hostname(),
         uptime: os.uptime(),
