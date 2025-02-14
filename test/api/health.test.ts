@@ -24,6 +24,11 @@ describe("Health API", () => {
     expect(response.status).toEqual(200);
   });
 
+  it("Check health", async () => {
+    const response = await axios.get(`${host}/cumulative/health`);
+    expect(response.status).toEqual(200);
+  });
+
   afterAll(async () => {
     await shutdownTestServer(server);
   });

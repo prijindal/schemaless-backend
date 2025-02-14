@@ -3,7 +3,7 @@ dotenv.config({ path: ".env.test" });
 
 import http from "http";
 
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { randomUUID } from "crypto";
 import { random } from "lodash";
 import { bootstrap, shutdownTestServer } from "./helpers/bootstrap";
@@ -137,6 +137,34 @@ describe("Registration API", () => {
     expect(response.status).toEqual(200);
     expect(response.data).toStrictEqual(["todo"]);
   })
+
+  it("revokes the appkey", async () => {
+    const response = await axios.post(`${host}/auth/revokekeys`, {}, {
+      headers: {
+        Authorization: `Bearer ${appKey}`,
+        "accept": "application/json",
+      }
+    });
+
+    expect(response.status).toEqual(200);
+  });
+
+  it("verifies the appkey is revoked", async () => {
+    let response: AxiosResponse | undefined;
+    try {
+      response = await axios.get(`${host}/auth/user`, {
+        headers: {
+        }
+      });
+    } catch (e) {
+      expect((e as AxiosError).isAxiosError).toEqual(true);
+      expect((e as AxiosError).response).not.toBeNull();
+      response = (e as AxiosError).response;
+    }
+
+    expect(response).not.toBeUndefined();
+    expect(response!.status).toEqual(404);
+  });
 
   afterAll(async () => {
     await shutdownTestServer(server);

@@ -21,7 +21,7 @@ export const bootstrap = async ({
       origin: "*",
     }
   });
-  io.on("connection", (socket) => iocContainer.get(SocketController).connectionListener(socket));
+  io.on("connection", (socket) => iocContainer.get(SocketController).connectionListener(io, socket));
   return server.listen(port);
 };
 

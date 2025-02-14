@@ -20,7 +20,7 @@ const io = new SocketIO.Server(server, {
   }
 });
 
-io.on("connection", (socket) => iocContainer.get(SocketController).connectionListener(socket));
+io.on("connection", (socket) => iocContainer.get(SocketController).connectionListener(io, socket));
 
 const listener = server.listen(PORT, HOST, 0, () =>
   logger.info(`Example app listening at http://${HOST}:${PORT}`)
