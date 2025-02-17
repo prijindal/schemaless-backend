@@ -1,7 +1,5 @@
-import 'dotenv/config';
-
 import http from "http";
-import SocketIO from "socket.io";
+import { Server } from "socket.io";
 import { logger } from "./logger";
 
 import { SocketController } from './socket/socket.service';
@@ -14,7 +12,7 @@ import { setup } from "./setup";
 
 
 const server = http.createServer(app);
-const io = new SocketIO.Server(server, {
+const io = new Server(server, {
   cors: {
     origin: "*",
   }

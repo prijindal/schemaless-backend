@@ -1,4 +1,4 @@
-import { HttpStatusCodeLiteral } from "tsoa";
+import type { HttpStatusCodeLiteral } from "tsoa";
 
 export class CustomError extends Error {
   public class_name: string;

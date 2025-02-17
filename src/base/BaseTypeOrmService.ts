@@ -2,8 +2,8 @@
 import { DecorateAll } from "decorate-all";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { FindOptionsOrder, FindOptionsSelect, FindOptionsWhere, In, Repository } from "typeorm";
-import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
+import { type FindOptionsOrder, type FindOptionsSelect, type FindOptionsWhere, In, Repository } from "typeorm";
+import type { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity.js";
 import { TypeOrmConnection } from "../db/typeorm";
 import { logger } from "../logger";
 import { PrometheusClient } from "../prometheus";
@@ -65,7 +65,7 @@ export abstract class BaseTypeOrmService<T extends { id: string }> {
     return await this.model.find({ where, select, order });
   }
 
-  async distinct(where: FindOptionsWhere<T>, column: keyof T):Promise<T[keyof T][]> {
+  async distinct(where: FindOptionsWhere<T>, column: keyof T): Promise<T[keyof T][]> {
     const a = await this.model.createQueryBuilder().where(where).distinctOn([column.toString()]).getMany();
     return a.map(a => a[column]);
   }

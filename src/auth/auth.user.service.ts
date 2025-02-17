@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
 import { User } from "../entity/user.entity";
 import { UserRepository } from "../repositories/user.repository";
-import { JwtPayload as UserJwtPayload } from "../types/jwt.types";
+import type { JwtPayload as UserJwtPayload } from "../types/jwt.types";
 
 @provide(UserAuthService)
 export class UserAuthService {

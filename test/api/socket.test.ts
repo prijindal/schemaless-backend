@@ -1,6 +1,4 @@
-import dotenv from "dotenv";
 import Client from "socket.io-client";
-dotenv.config({ path: ".env.test" });
 
 import http from "http";
 

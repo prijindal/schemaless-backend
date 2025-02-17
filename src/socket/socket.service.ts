@@ -1,7 +1,7 @@
 import { inject } from "inversify";
 import { Server, Socket } from "socket.io";
 import { UserAuthService } from "../auth/auth.user.service";
-import { EntityActionResponse, EntityActionService, EntityHistoryResponse } from "../controllers/entity/entityService";
+import { type EntityActionResponse, EntityActionService, type EntityHistoryResponse } from "../controllers/entity/entityService";
 import { extractTokenFromHeaders } from "../helpers/token";
 import { logger } from "../logger";
 import { singleton } from "../singleton";

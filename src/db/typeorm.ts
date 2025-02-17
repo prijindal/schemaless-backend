@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions.js";
+import type { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions.js";
 import { Retrier } from "../helpers/retrier";
 import { logger } from "../logger";
 import { singleton } from "../singleton";

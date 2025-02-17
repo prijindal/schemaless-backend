@@ -1,6 +1,6 @@
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { FindOptionsWhere, LessThanOrEqual, MoreThanOrEqual, Not } from "typeorm";
+import { type FindOptionsWhere, LessThanOrEqual, MoreThanOrEqual, Not } from "typeorm";
 import { TypeOrmConnection } from "../../db/typeorm";
 import { EntityHistory } from "../../entity/entity_history.entity";
 import { EntityHistoryRepository } from "../../repositories/entity_history.repository";
@@ -65,7 +65,7 @@ export class EntityActionService {
   ) { }
 
   async getEntities(user_id: string) {
-    return this.entityHistoryRepository.distinct({user_id: user_id}, "entity_name") as Promise<string[]>;
+    return this.entityHistoryRepository.distinct({ user_id: user_id }, "entity_name") as Promise<string[]>;
   }
 
   async searchEntitiesHistory(body: EntityHistoryRequest[], user_id: string) {

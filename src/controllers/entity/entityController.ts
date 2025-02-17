@@ -1,8 +1,9 @@
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Body, Get, Post, Request, Route, Security, SuccessResponse, Tags } from "tsoa";
-import { UserAuthorizedRequest } from "../../types/auth.types";
-import { EntityAction, EntityActionResponse, EntityActionService, EntityHistoryRequest, EntityHistoryResponse } from "./entityService";
+import type { UserAuthorizedRequest } from "../../types/auth.types";
+import type { EntityAction, EntityActionResponse, EntityHistoryRequest, EntityHistoryResponse } from "./entityService";
+import { EntityActionService } from "./entityService";
 
 @Tags("entity")
 @Route("/entity")

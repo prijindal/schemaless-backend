@@ -1,9 +1,9 @@
-import { Request } from "express";
+import type { Request } from "express";
 import { InvalidCredentialsError } from "../errors/error";
 import { extractTokenFromHeaders } from "../helpers/token";
 import { iocContainer } from "../ioc";
 import { logger } from "../logger";
-import { UserAuthorizedRequest } from "../types/auth.types";
+import type { UserAuthorizedRequest } from "../types/auth.types";
 import { UserAuthService } from "./auth.user.service";
 
 export async function expressAuthentication(

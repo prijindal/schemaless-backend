@@ -1,6 +1,6 @@
-import { LoggerOptions } from "typeorm";
-import { BaseDataSourceOptions } from "typeorm/data-source/BaseDataSourceOptions";
-import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
+import type { LoggerOptions } from "typeorm";
+import type { BaseDataSourceOptions } from "typeorm/data-source/BaseDataSourceOptions.js";
+import type { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions.js";
 
 import { PinoTypeormLogger } from "./typeorm_logger";
 

@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.test" });
-
 import http from "http";
 
 import axios from "axios";

@@ -1,6 +1,6 @@
 // src/util/provideSingleton.ts
+import type { interfaces } from "inversify";
 import { fluentProvide } from "inversify-binding-decorators";
-import { interfaces } from "inversify";
 
 export const singleton = function <T>(
   identifier: interfaces.ServiceIdentifier<T>

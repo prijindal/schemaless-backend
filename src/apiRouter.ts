@@ -2,9 +2,9 @@
 import bodyParser from "body-parser";
 import cors from "cors";
 import {
-  Request as ExRequest,
-  Response as ExResponse,
-  NextFunction,
+  type Request as ExRequest,
+  type Response as ExResponse,
+  type NextFunction,
   Router,
 } from "express";
 import promBundle from "express-prom-bundle";

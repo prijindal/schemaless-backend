@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Logger } from "typeorm";
+import type { Logger } from "typeorm";
 import { logger } from "../logger";
 
 export class PinoTypeormLogger implements Logger {

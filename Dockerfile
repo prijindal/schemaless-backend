@@ -1,4 +1,4 @@
-FROM node:22
+FROM oven/bun
 
 ENV NODE_ENV=production
 
@@ -9,6 +9,7 @@ USER node
 COPY --chown=node:node package* /app/
 COPY --chown=node:node node_modules /app/node_modules
 
-COPY --chown=node:node dist /app/dist
+COPY --chown=node:node src /app/src
 
-CMD [ "node", "dist/index.js"]
+EXPOSE 3000/tcp
+CMD [ "bun", "run", "src/index.ts"]

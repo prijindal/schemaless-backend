@@ -1,5 +1,5 @@
 import http from "http";
-import SocketIO from "socket.io";
+import { Server } from "socket.io";
 
 import { SocketController } from '../../../src/socket/socket.service';
 
@@ -16,7 +16,7 @@ export const bootstrap = async ({
 }) => {
   const server = http.createServer(app);
   await setup(options);
-  const io = new SocketIO.Server(server, {
+  const io = new Server(server, {
     cors: {
       origin: "*",
     }
