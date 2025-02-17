@@ -1,13 +1,13 @@
 import type { HttpStatusCodeLiteral } from "tsoa";
 
-export class CustomError extends Error {
+// TODO: extend customerror from error
+export class CustomError {
   public class_name: string;
   constructor(
     public status_code: number,
     public message: string,
     public details?: string
   ) {
-    super(message);
     this.class_name = this.constructor.name;
   }
 }
