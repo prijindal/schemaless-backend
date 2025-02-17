@@ -1,4 +1,4 @@
-FROM oven/bun
+FROM oven/bun:latest
 
 ENV NODE_ENV=production
 
