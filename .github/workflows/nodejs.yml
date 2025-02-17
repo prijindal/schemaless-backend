@@ -25,7 +25,6 @@ jobs:
         uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: bun generate
-      - run: npm ci --omit=dev
       - name: Login to Github Packages
         uses: docker/login-action@v3
         with:
