@@ -6,6 +6,7 @@ WORKDIR /app
 
 USER bun
 
+COPY --chown=bun:bun tsconfig.json /app/
 COPY --chown=bun:bun package* /app/
 COPY --chown=bun:bun node_modules /app/node_modules
 
