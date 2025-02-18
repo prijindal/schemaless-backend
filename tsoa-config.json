@@ -5,7 +5,7 @@
     "src/**/*Controller.ts"
   ],
   "spec": {
-    "basePath": "/",
+    "basePath": "/api/",
     "useTitleTagsForInlineObjects": true,
     "outputDirectory": "src/build",
     "specVersion": 3,
@@ -23,7 +23,7 @@
     "entryFile": "./src/app.ts"
   },
   "routes": {
-    "basePath": "/",
+    "basePath": "/api/",
     "entryFile": "./src/app.ts",
     "authenticationModule": "./src/auth/authentication.ts",
     "routesDir": "src/build",

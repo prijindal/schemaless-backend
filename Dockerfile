@@ -1,16 +1,14 @@
-FROM oven/bun:latest
+FROM node:22
 
 ENV NODE_ENV=production
 
 WORKDIR /app
 
-USER bun
+USER node
 
-COPY --chown=bun:bun tsconfig.json /app/
-COPY --chown=bun:bun package* /app/
-COPY --chown=bun:bun node_modules /app/node_modules
+COPY --chown=node:node package* /app/
+COPY --chown=node:node node_modules /app/node_modules
 
-COPY --chown=bun:bun src /app/src
+COPY --chown=node:node dist /app/dist
 
-EXPOSE 3000/tcp
-CMD [ "bun", "run", "src/index.ts"]
+CMD [ "node", "dist/index.js"]

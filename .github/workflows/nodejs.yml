@@ -20,12 +20,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
       - uses: actions/checkout@v4
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: bun generate
-      - run: bun install --frozen-lockfile --production
+      - run: npm ci
+      - run: npm run build
+      - run: npm ci --omit=dev
       - name: Login to Github Packages
         uses: docker/login-action@v3
         with:
@@ -63,14 +64,15 @@ jobs:
           - 5432:5432
 
     steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
       - uses: actions/checkout@v4
-      - name: Install bun
-        uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-      - run: bun generate
-      - run: bun lint
+      - run: npm ci
+      - run: npm run generate
+      - run: npm run lint
       - name: Test
-        run: bun test
+        run: npm run test
         env:
           POSTGRES_URI: postgres://schemaless:schemaless@localhost:5432/schemaless
           LOG_LEVEL: debug
@@ -78,7 +80,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Test with junit
-        run: bun test --reporter=junit --reporter-outfile=./junit.xml
+        run: npm run test -- --reporters=jest-junit
         env:
           POSTGRES_URI: postgres://schemaless:schemaless@localhost:5432/schemaless
           LOG_LEVEL: info

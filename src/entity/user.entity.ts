@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum UserStatus {
   "ACTIVATED" = "ACTIVATED",
@@ -19,6 +19,7 @@ export class User {
    * In our swagger docs, this should not be there
   */
   @Column({ nullable: false })
+  @Index()
   project_key: string;
 
   @Column({ unique: true })

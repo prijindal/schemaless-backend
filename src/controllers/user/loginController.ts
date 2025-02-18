@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
@@ -38,7 +39,7 @@ export class UserLoginController {
 		if (user == null) {
 			throw new InvalidCredentialsError("Invalid username or password");
 		}
-		const matched = await Bun.password.verify(body.password, user.bcrypt_hash);
+		const matched = await bcrypt.compare(body.password, user.bcrypt_hash);
 		if (matched == null) {
 			throw new InvalidCredentialsError("Invalid username or password");
 		}
@@ -68,7 +69,7 @@ export class UserLoginController {
 		}
 		await this.userRepository.create({
 			username: body.username,
-			bcrypt_hash: await Bun.password.hash(body.password),
+			bcrypt_hash: await bcrypt.hash(body.password, 10),
 			is_admin: false,
 			status: UserStatus.PENDING_VERIFICATION,
 			token: randomUUID(),
@@ -97,7 +98,7 @@ export class UserLoginController {
 		}
 		await this.userRepository.create({
 			username: body.username,
-			bcrypt_hash: await Bun.password.hash(body.password),
+			bcrypt_hash: await bcrypt.hash(body.password, 10),
 			is_admin: true,
 			status: UserStatus.ACTIVATED,
 			token: randomUUID(),
