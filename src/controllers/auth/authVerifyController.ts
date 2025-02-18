@@ -3,6 +3,7 @@ import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Get, Post, Request, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
 import { UserAuthService } from "../../auth/auth.user.service";
+import { PROJECT_KEY } from "../../config";
 import { User } from "../../entity/user.entity";
 import { NotExistsError } from "../../errors/error";
 import { UserRepository } from "../../repositories/user.repository";
@@ -41,12 +42,17 @@ export class AuthVerifyController {
   @Post("revokekeys")
   @Response<NotExistsError>(NotExistsError.status_code)
   @SuccessResponse(200)
-  async revokeKeys(@Request() request: UserAuthorizedRequest) {
-    await this.userRepository.update({ id: request.loggedInUser.id }, { token: randomUUID() });
-    const updatedUser = await this.userRepository.getOne({ id: request.loggedInUser.id, });
+  async revokeKeys(@Request() request: UserAuthorizedRequest): Promise<UserVerifyResponse> {
+    await this.userRepository.update({ id: request.loggedInUser.id, project_key: PROJECT_KEY }, { token: randomUUID() });
+    const updatedUser = await this.userRepository.getOne({ id: request.loggedInUser.id, project_key: PROJECT_KEY });
     if (updatedUser == null) {
       throw new NotExistsError("User not found");
     }
-    return updatedUser;
+    return {
+      username: updatedUser.username,
+      created_at: updatedUser.created_at,
+      status: updatedUser.status,
+      is_admin: updatedUser.is_admin,
+    };
   }
 }

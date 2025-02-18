@@ -13,6 +13,14 @@ export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  /**
+   * This will be unique for a project, and is typically passed by an environment variable 
+   * It is used to use the same database to handle multiple projects
+   * In our swagger docs, this should not be there
+  */
+  @Column({ nullable: false })
+  project_key: string;
+
   @Column({ unique: true })
   public username: string;
 

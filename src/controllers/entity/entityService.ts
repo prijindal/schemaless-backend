@@ -1,9 +1,12 @@
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { type FindOptionsWhere, LessThanOrEqual, MoreThanOrEqual, Not } from "typeorm";
+import { PROJECT_KEY } from "../../config";
 import { TypeOrmConnection } from "../../db/typeorm";
-import { EntityHistory } from "../../entity/entity_history.entity";
+import { EntityHistory as EntityHistoryEntity } from "../../entity/entity_history.entity";
 import { EntityHistoryRepository } from "../../repositories/entity_history.repository";
+
+interface EntityHistory extends Pick<EntityHistoryEntity, "action" | "created_at" | "entity_id" | "entity_name" | "id" | "payload" | "timestamp"> { };
 
 type DateParams = {
   gte?: Date;
@@ -65,14 +68,15 @@ export class EntityActionService {
   ) { }
 
   async getEntities(user_id: string) {
-    return this.entityHistoryRepository.distinct({ user_id: user_id }, "entity_name") as Promise<string[]>;
+    return this.entityHistoryRepository.distinct({ user_id: user_id, project_key: PROJECT_KEY }, "entity_name") as Promise<string[]>;
   }
 
   async searchEntitiesHistory(body: EntityHistoryRequest[], user_id: string) {
     const response = body.map(async (entityRequest): Promise<EntityHistoryResponse> => {
-      const where: FindOptionsWhere<EntityHistory> = {
+      const where: FindOptionsWhere<EntityHistoryEntity> = {
         user_id: user_id,
         entity_name: entityRequest.entity_name,
+        project_key: PROJECT_KEY
       };
       if (entityRequest.params.created_at) {
         if (entityRequest.params.created_at.gte) {
@@ -89,7 +93,15 @@ export class EntityActionService {
       const entityResponse = await this.entityHistoryRepository.getMany(where, { order: entityRequest.order });
       return {
         entity_name: entityRequest.entity_name,
-        data: entityResponse,
+        data: entityResponse.map((a) => ({
+          action: a.action,
+          created_at: a.created_at,
+          entity_id: a.entity_id,
+          entity_name: a.entity_name,
+          id: a.id,
+          payload: a.payload,
+          timestamp: a.timestamp
+        })),
       };
     });
     return await Promise.all(response);
@@ -97,7 +109,7 @@ export class EntityActionService {
 
   async entityAction(body: EntityAction[], user_id: string): Promise<EntityActionResponse[]> {
     const response = await this.conn.getInstance().transaction(async (manager) => {
-      const entityHistoryRepository = manager.getRepository(EntityHistory);
+      const entityHistoryRepository = manager.getRepository(EntityHistoryEntity);
       const responses: EntityActionResponse[] = [];
       for (const entityAction of body) {
         await entityHistoryRepository.save({
@@ -109,6 +121,7 @@ export class EntityActionService {
           action: entityAction.action,
           payload: entityAction.action === "DELETE" ? {} : entityAction.payload,
           timestamp: entityAction.timestamp,
+          project_key: PROJECT_KEY
         });
         const response = { affectedrows: 1, entity_name: entityAction.entity_name };
         responses.push(response);

@@ -12,9 +12,12 @@ export const LOG_LEVEL = !isEmpty(process.env.LOG_LEVEL)
 
 export const POSTGRES_URI = process.env.POSTGRES_URI;
 
+export const POSTGRES_POOL_SIZE = parseInt(process.env.POSTGRES_POOL_SIZE || "2");
 
 export const REQUEST_TRACING = process.env.REQUEST_TRACING === "true";
 // logFormatter: pino-pretty | json
 export const LOG_FORMATTER = (process.env.LOG_FORMATTER || "JSON").toUpperCase();
 
 export const JWT_SECRET = process.env.JWT_SECRET || "1234567890";
+
+export const PROJECT_KEY = process.env.PROJECT_KEY || "project";

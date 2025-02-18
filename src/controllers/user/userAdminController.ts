@@ -1,6 +1,7 @@
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Body, Delete, Get, Path, Post, Response, Route, Security, SuccessResponse, Tags } from "tsoa";
+import { PROJECT_KEY } from "../../config";
 import { UserStatus } from "../../entity/user.entity";
 import { NotExistsError } from "../../errors/error";
 import { UserRepository } from "../../repositories/user.repository";
@@ -18,7 +19,7 @@ export class UserAdminController {
   @Response<NotExistsError>(NotExistsError.status_code)
   @SuccessResponse(200)
   async userApproval(@Path("userid") userid: string, @Body() body: { approval: boolean }) {
-    const user = await this.userRepository.getOne({ id: userid });
+    const user = await this.userRepository.getOne({ id: userid, project_key: PROJECT_KEY });
     if (user == null) {
       throw new NotExistsError("User does not exist");
     }
@@ -31,7 +32,7 @@ export class UserAdminController {
   @Response<NotExistsError>(NotExistsError.status_code)
   @SuccessResponse(200)
   async deleteUser(@Path() userid: string) {
-    const user = await this.userRepository.getOne({ id: userid });
+    const user = await this.userRepository.getOne({ id: userid, project_key: PROJECT_KEY });
     if (user == null) {
       throw new NotExistsError("User does not exist");
     }
@@ -41,7 +42,7 @@ export class UserAdminController {
 
   @Get("")
   async listUsers() {
-    const users = await this.userRepository.getMany({});
+    const users = await this.userRepository.getMany({ project_key: PROJECT_KEY });
     return users.map((user) => ({
       id: user.id,
       username: user.username,

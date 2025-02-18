@@ -8,6 +8,9 @@ export class EntityHistory {
     @Column({ nullable: false })
     user_id: string;
 
+    @Column({ nullable: false })
+    project_key: string;
+
     @ManyToOne(() => User, (u: User) => u.id, { nullable: false, persistence: false, onDelete: "CASCADE" })
     @JoinColumn({ name: 'user_id' })
     private _user: User;

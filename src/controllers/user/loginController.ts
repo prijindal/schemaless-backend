@@ -3,6 +3,7 @@ import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import { Body, Post, Response, Route, SuccessResponse, Tags } from "tsoa";
 import { UserAuthService } from "../../auth/auth.user.service";
+import { PROJECT_KEY } from "../../config";
 import { UserStatus } from "../../entity/user.entity";
 import { InvalidCredentialsError, UserUnauthorizedError } from "../../errors/error";
 import { UserRepository } from "../../repositories/user.repository";
@@ -33,7 +34,7 @@ export class UserLoginController {
 	@Response<InvalidCredentialsError>(InvalidCredentialsError.status_code)
 	@SuccessResponse(200)
 	async loginUser(@Body() body: UserLoginRequest) {
-		const user = await this.userRepository.getOne({ username: body.username });
+		const user = await this.userRepository.getOne({ username: body.username, project_key: PROJECT_KEY });
 		if (user == null) {
 			throw new InvalidCredentialsError("Invalid username or password");
 		}
@@ -57,11 +58,11 @@ export class UserLoginController {
 	@Response<InvalidCredentialsError>(InvalidCredentialsError.status_code)
 	@SuccessResponse(200)
 	async registerUser(@Body() body: UserLoginRequest) {
-		const existingAdminUsers = await this.userRepository.getOne({ is_admin: true });
+		const existingAdminUsers = await this.userRepository.getOne({ is_admin: true, project_key: PROJECT_KEY });
 		if (existingAdminUsers == null) {
 			throw new InvalidCredentialsError("Admin user not initialized");
 		}
-		const existingUser = await this.userRepository.getOne({ username: body.username });
+		const existingUser = await this.userRepository.getOne({ username: body.username, project_key: PROJECT_KEY });
 		if (existingUser != null) {
 			throw new InvalidCredentialsError("User already exists");
 		}
@@ -70,7 +71,8 @@ export class UserLoginController {
 			bcrypt_hash: await Bun.password.hash(body.password),
 			is_admin: false,
 			status: UserStatus.PENDING_VERIFICATION,
-			token: randomUUID()
+			token: randomUUID(),
+			project_key: PROJECT_KEY
 		});
 		return true;
 	}
@@ -89,7 +91,7 @@ export class UserLoginController {
 	@Response<InvalidCredentialsError>(InvalidCredentialsError.status_code)
 	@SuccessResponse(200)
 	async initializeServer(@Body() body: UserLoginRequest) {
-		const existingUsers = await this.userRepository.getOne({ is_admin: true });
+		const existingUsers = await this.userRepository.getOne({ is_admin: true, project_key: PROJECT_KEY });
 		if (existingUsers != null) {
 			throw new InvalidCredentialsError("Admin user already exists");
 		}
@@ -98,7 +100,8 @@ export class UserLoginController {
 			bcrypt_hash: await Bun.password.hash(body.password),
 			is_admin: true,
 			status: UserStatus.ACTIVATED,
-			token: randomUUID()
+			token: randomUUID(),
+			project_key: PROJECT_KEY
 		});
 		return true;
 	}

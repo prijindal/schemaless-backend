@@ -1,10 +1,11 @@
+import type { PoolOptions } from "pg";
 import type { LoggerOptions } from "typeorm";
 import type { BaseDataSourceOptions } from "typeorm/data-source/BaseDataSourceOptions.js";
 import type { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions.js";
 
 import { PinoTypeormLogger } from "./typeorm_logger";
 
-import { AUTO_MIGRATION, LOG_LEVEL, POSTGRES_URI } from "../config";
+import { AUTO_MIGRATION, LOG_LEVEL, POSTGRES_POOL_SIZE, POSTGRES_URI, PROJECT_KEY } from "../config";
 import { EntityHistory } from "../entity/entity_history.entity";
 import { User } from "../entity/user.entity";
 
@@ -33,11 +34,16 @@ export const baseDbOptions: Omit<BaseDataSourceOptions, "type"> = {
   },
 };
 
-const createOptions = () => {
+const createOptions = (): PostgresConnectionOptions => {
   return {
     ...baseDbOptions,
     type: "postgres",
     url: POSTGRES_URI,
+    applicationName: PROJECT_KEY,
+    extra: {
+      allowExitOnIdle: true,
+      max: POSTGRES_POOL_SIZE,
+    } as PoolOptions,
   } as PostgresConnectionOptions;
 };
 

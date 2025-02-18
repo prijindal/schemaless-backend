@@ -1,7 +1,7 @@
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config";
+import { JWT_SECRET, PROJECT_KEY } from "../config";
 import { User } from "../entity/user.entity";
 import { UserRepository } from "../repositories/user.repository";
 import type { JwtPayload as UserJwtPayload } from "../types/jwt.types";
@@ -35,7 +35,7 @@ export class UserAuthService {
     if (payload == null || payload.type != "user") {
       return null;
     }
-    const user = await this.userRepository.getOne({ id: payload.user_id, token: payload.token });
+    const user = await this.userRepository.getOne({ id: payload.user_id, token: payload.token, project_key: PROJECT_KEY });
     if (user == null || user.status != "ACTIVATED") {
       return null;
     }
