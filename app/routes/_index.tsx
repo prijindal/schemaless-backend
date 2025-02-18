@@ -9,7 +9,7 @@ export async function loader({
 }: LoaderFunctionArgs) {
   const token = await extractJwtToken(request);
   if (token == null) {
-    return null;
+    return redirect("/login",);
   }
 
   const user = await verifyUser(token);
