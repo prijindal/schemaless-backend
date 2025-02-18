@@ -1,4 +1,6 @@
-export async function verifyUser(token: string) {
+import type { UserVerifyResponse } from "../../src/controllers/auth/authVerifyController";
+
+export async function verifyUser(token: string): Promise<UserVerifyResponse | null> {
 
   try {
     const response = await fetch("http://127.0.0.1:3000/api/auth/user", {
@@ -8,7 +10,7 @@ export async function verifyUser(token: string) {
       }
     })
     if (response.status == 200) {
-      return response.json();
+      return (await response.json()) as UserVerifyResponse;
     } else {
       return null;
     }
@@ -26,7 +28,7 @@ export async function getEntities(token: string): Promise<string[]> {
       }
     });
     if (response.status == 200) {
-      return response.json();
+      return (await response.json()) as string[];
     } else {
       return [];
     }

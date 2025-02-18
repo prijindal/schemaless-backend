@@ -24,7 +24,7 @@ export async function loader({
 }
 
 export default function Login() {
-  const user = useLoaderData<typeof loader>();
+  const user = useLoaderData<typeof loader>() as { username: string; entities: string[] };
   return <div>
     Home Page: {user.username}
     Entities: {user.entities.map((entity) => <div>{entity}</div>)}

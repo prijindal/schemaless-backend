@@ -23,7 +23,7 @@
     "resolveJsonModule": true,
     "lib": ["ES2021"],
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "."
   },
   "include": ["src"]
 }
