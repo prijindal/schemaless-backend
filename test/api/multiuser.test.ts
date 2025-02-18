@@ -23,14 +23,14 @@ describe("Multi User API", () => {
   let user1Token: string | undefined;
 
   it("Creates an admin user and login", async () => {
-    const response = await axios.post(`${host}/user/login/initialize`, {
+    const response = await axios.post(`${host}/api/user/login/initialize`, {
       username: "admin",
       password: "admin",
     });
 
     expect(response.status).toEqual(200);
     expect(response.data).toEqual(true);
-    const loginResponse = await axios.post(`${host}/user/login/login`, {
+    const loginResponse = await axios.post(`${host}/api/user/login/login`, {
       username: "admin",
       password: "admin",
     });
@@ -41,7 +41,7 @@ describe("Multi User API", () => {
 
   it("Register a secondary user and check that it's auth is invalid", async () => {
     const username = "user1";
-    const response = await axios.post(`${host}/user/login/register`, {
+    const response = await axios.post(`${host}/api/user/login/register`, {
       username: username,
       password: "user1",
     });
@@ -51,7 +51,7 @@ describe("Multi User API", () => {
 
     let loginResponse: AxiosResponse | undefined;
     try {
-      loginResponse = await axios.post(`${host}/user/login/login`, {
+      loginResponse = await axios.post(`${host}/api/user/login/login`, {
         username: username,
         password: "user1",
       });
@@ -68,7 +68,7 @@ describe("Multi User API", () => {
   });
 
   it("List users using admin token", async () => {
-    const response = await axios.get(`${host}/user/admin`, {
+    const response = await axios.get(`${host}/api/user/admin`, {
       headers: {
         Authorization: `Bearer ${adminToken}`,
         "accept": "application/json",
@@ -82,7 +82,7 @@ describe("Multi User API", () => {
   })
 
   it("approve secondary user", async () => {
-    const response = await axios.post(`${host}/user/admin/${user1Id}/approval`, {
+    const response = await axios.post(`${host}/api/user/admin/${user1Id}/approval`, {
       approval: true,
     }, {
       headers: {
@@ -96,7 +96,7 @@ describe("Multi User API", () => {
   })
 
   it("Login secondary user", async () => {
-    const loginResponse = await axios.post(`${host}/user/login/login`, {
+    const loginResponse = await axios.post(`${host}/api/user/login/login`, {
       username: "user1",
       password: "user1",
     });
@@ -106,7 +106,7 @@ describe("Multi User API", () => {
   });
 
   it("Test auth of secondary user", async () => {
-    const response = await axios.get(`${host}/auth/user`, {
+    const response = await axios.get(`${host}/api/auth/user`, {
       headers: {
         Authorization: `Bearer ${user1Token}`,
         "accept": "application/json",
@@ -121,7 +121,7 @@ describe("Multi User API", () => {
   it("secondary user should not allowed to use admin api", async () => {
     let response: AxiosResponse | undefined;
     try {
-      response = await axios.get(`${host}/user/admin`, {
+      response = await axios.get(`${host}/api/user/admin`, {
         headers: {
           Authorization: `Bearer ${user1Token}`,
           "accept": "application/json",

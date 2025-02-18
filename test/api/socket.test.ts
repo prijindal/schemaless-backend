@@ -23,7 +23,7 @@ describe("Socket Tests", () => {
   let jwtToken: string | undefined;
 
   it("Creates an admin user", async () => {
-    const response = await axios.post(`${host}/user/login/initialize`, {
+    const response = await axios.post(`${host}/api/user/login/initialize`, {
       username: "admin",
       password: "admin",
     });
@@ -33,7 +33,7 @@ describe("Socket Tests", () => {
   })
 
   it("performm login for admin user", async () => {
-    const response = await axios.post(`${host}/user/login/login`, {
+    const response = await axios.post(`${host}/api/user/login/login`, {
       username: "admin",
       password: "admin",
     });

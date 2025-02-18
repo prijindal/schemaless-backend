@@ -2,7 +2,7 @@
 import { createRequestHandler } from "@remix-run/express";
 import express from "express";
 
-// @ts-ignore
+// @ts-expect-error build/server files don't have types
 import * as build from "../build/server";
 
 import apiRouter from "./apiRouter";

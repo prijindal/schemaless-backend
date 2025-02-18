@@ -20,12 +20,12 @@ describe("Health API", () => {
   const host = `http://localhost:${port}`;
 
   it("Check health", async () => {
-    const response = await axios.get(`${host}/health`);
+    const response = await axios.get(`${host}/api/health`);
     expect(response.status).toEqual(200);
   });
 
   it("Check health", async () => {
-    const response = await axios.get(`${host}/cumulative/health`);
+    const response = await axios.get(`${host}/api/cumulative/health`);
     expect(response.status).toEqual(200);
   });
 

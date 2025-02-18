@@ -23,7 +23,7 @@ describe("Registration API", () => {
   let appKey: string | undefined;
 
   it("Creates an admin user", async () => {
-    const response = await axios.post(`${host}/user/login/initialize`, {
+    const response = await axios.post(`${host}/api/user/login/initialize`, {
       username: "admin",
       password: "admin",
     });
@@ -33,7 +33,7 @@ describe("Registration API", () => {
   })
 
   it("performm login for admin user", async () => {
-    const response = await axios.post(`${host}/user/login/login`, {
+    const response = await axios.post(`${host}/api/user/login/login`, {
       username: "admin",
       password: "admin",
     });
@@ -43,7 +43,7 @@ describe("Registration API", () => {
   });
 
   it("check if verify auth works", async () => {
-    const response = await axios.get(`${host}/auth/user`, {
+    const response = await axios.get(`${host}/api/auth/user`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
         "accept": "application/json",
@@ -55,7 +55,7 @@ describe("Registration API", () => {
   })
 
   it("creates a new appkey", async () => {
-    const response = await axios.post(`${host}/auth/generatekey`, {}, {
+    const response = await axios.post(`${host}/api/auth/generatekey`, {}, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
         "accept": "application/json",
@@ -67,7 +67,7 @@ describe("Registration API", () => {
   });
 
   it("verifies the appkey", async () => {
-    const response = await axios.get(`${host}/auth/user`, {
+    const response = await axios.get(`${host}/api/auth/user`, {
       headers: {
         Authorization: `Bearer ${appKey}`,
         "accept": "application/json",
@@ -81,7 +81,7 @@ describe("Registration API", () => {
   it("performs some server actions with the appkey", async () => {
     const entityId = randomUUID();
     const hostId = randomUUID();
-    const response = await axios.post(`${host}/entity/action`, [{
+    const response = await axios.post(`${host}/api/entity/action`, [{
       "action": "CREATE",
       "entity_id": entityId,
       "entity_name": "todo",
@@ -104,7 +104,7 @@ describe("Registration API", () => {
   });
 
   it("verifies the entity history from that appkey", async () => {
-    const response = await axios.post(`${host}/entity/history/search`, [
+    const response = await axios.post(`${host}/api/entity/history/search`, [
       {
         "entity_name": "todo",
         "params": {},
@@ -128,7 +128,7 @@ describe("Registration API", () => {
   });
 
   it("verifies get entity names for that project and jwt key", async () => {
-    const response = await axios.get(`${host}/entity/history/entities`, {
+    const response = await axios.get(`${host}/api/entity/history/entities`, {
       headers: {
         "Authorization": `Bearer ${jwtToken}`,
       }
@@ -139,7 +139,7 @@ describe("Registration API", () => {
   })
 
   it("revokes the appkey", async () => {
-    const response = await axios.post(`${host}/auth/revokekeys`, {}, {
+    const response = await axios.post(`${host}/api/auth/revokekeys`, {}, {
       headers: {
         Authorization: `Bearer ${appKey}`,
         "accept": "application/json",
@@ -152,7 +152,7 @@ describe("Registration API", () => {
   it("verifies the appkey is revoked", async () => {
     let response: AxiosResponse | undefined;
     try {
-      response = await axios.get(`${host}/auth/user`, {
+      response = await axios.get(`${host}/api/auth/user`, {
         headers: {
         }
       });
