@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "prebuild": "npm run remix && npm run remix",
+    "prebuild": "npm run remix && npm run generate",
     "remix": "remix vite:build",
     "build": "tsc",
     "clean": "rm -rf dist",
