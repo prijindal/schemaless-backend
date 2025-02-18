@@ -1,6 +1,41 @@
+import { ActionFunction, ActionFunctionArgs, redirect } from "@remix-run/node";
+import {
+  Form,
+} from "@remix-run/react";
 import React from "react";
+import { loginUser } from "../utils/api";
+import { setUser } from "../utils/user";
 export default function Login() {
   return <div>
-    Login Page
+    <Form method="POST">
+      <input type="text" name="username" />
+      <input type="password" name="password" />
+      <input type="submit" />
+    </Form>
   </div>
+}
+
+export const action: ActionFunction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const bodyParams = await request.formData();
+
+  const username = bodyParams.get("username");
+  const password = bodyParams.get("password");
+
+  try {
+    const response = await loginUser(username?.slice() as string, password?.slice() as string);
+
+    if (response != null) {
+      return redirect("/", {
+        headers: {
+          "Set-Cookie": await setUser(request, response),
+        },
+      });
+    } else {
+      return {};
+    }
+  } catch (e) {
+    throw e;
+  }
 }

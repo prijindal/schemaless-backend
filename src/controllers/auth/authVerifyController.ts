@@ -9,7 +9,7 @@ import { NotExistsError } from "../../errors/error";
 import { UserRepository } from "../../repositories/user.repository";
 import type { UserAuthorizedRequest } from "../../types/auth.types";
 
-interface UserVerifyResponse extends Pick<User, "username" | "created_at" | "status" | "is_admin"> { };
+export interface UserVerifyResponse extends Pick<User, "username" | "created_at" | "status" | "is_admin"> { };
 
 @Tags("auth")
 @Route("/auth")

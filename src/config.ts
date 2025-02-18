@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { isEmpty, lowerCase } from "lodash";
 
 export const PORT = Number(process.env.PORT || "3000");

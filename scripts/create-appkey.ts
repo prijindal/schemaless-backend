@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://127.0.0.1:3000";
+const url = "http://127.0.0.1:3000/api";
 const credentials = {
   username: "prijindal",
   password: "prijindal",
@@ -30,7 +30,7 @@ const main = async () => {
   console.log(project_id);
 
 
-  const appKeyResponse = await axios.post(`${url}/projects/${project_id}/generatekey`, {  }, { headers: { "Authorization": `Bearer ${jwtToken}`, "Content-Type": "application/json" } });
+  const appKeyResponse = await axios.post(`${url}/projects/${project_id}/generatekey`, {}, { headers: { "Authorization": `Bearer ${jwtToken}`, "Content-Type": "application/json" } });
 
   console.log(appKeyResponse.data);
 };
