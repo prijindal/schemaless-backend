@@ -75,6 +75,25 @@ export async function getEntitiesHistory(token: string, entities: string[]): Pro
   }
 }
 
+export async function generateToken(token: string): Promise<string | null> {
+  try {
+    const response = await fetch("http://127.0.0.1:3000/api/auth/generatekey", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if (response.status == 200) {
+      return (await response.json()) as string;
+    } else {
+      return null;
+    }
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
 export async function loginUser(username: string, password: string): Promise<string | null> {
   const response = await fetch("http://127.0.0.1:3000/api/user/login", {
     method: "POST",

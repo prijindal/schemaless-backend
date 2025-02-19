@@ -1,5 +1,5 @@
-import { ActionIcon, AppShell, Flex, Table, Tabs, Title } from "@mantine/core";
-import { IconLogout } from "@tabler/icons-react";
+import { ActionIcon, AppShell, Flex, Menu, Table, Tabs, Title } from "@mantine/core";
+import { IconLogout, IconUser } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import React from "react";
 import { Link, redirect, useLoaderData, type LoaderFunctionArgs } from "react-router";
@@ -23,25 +23,45 @@ export async function loader({
   const history = await getEntitiesHistory(token, entities);
   return Response.json({
     username: user.username,
+    isAdmin: user.is_admin,
     entities,
     history,
   });
 }
 
 export default function Login() {
-  const user = useLoaderData<typeof loader>() as { username: string; entities: string[]; history: EntityHistoryResponse[] };
+  const user = useLoaderData<typeof loader>() as {
+    username: string;
+    isAdmin: boolean;
+    entities: string[];
+    history: EntityHistoryResponse[]
+  };
   return <AppShell
     header={{ height: 60 }}
     padding="md">
     <AppShell.Header p="md">
       <Flex direction="row" justify="space-between" align="center" h="100%">
         <Title order={4}>Schemaless</Title>
-        <Title order={6}>
-          <span>{user.username}</span>
-          <ActionIcon ml="lg" variant="filled" component={Link} to="/logout" aria-label="Logout">
-            <IconLogout style={{ width: '70%', height: '70%' }} stroke={1.5} />
-          </ActionIcon>
-        </Title>
+        <Menu shadow="md" width={200}>
+          <Menu.Target>
+            <ActionIcon variant="filled">
+              <IconUser style={{ width: '70%', height: '70%' }} stroke={1.5} />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>{user.username}</Menu.Label>
+            <Menu.Item component={Link} to="/generate-token">
+              Generate Token
+            </Menu.Item>
+            <Menu.Item component={Link} to="/revoke-tokens">
+              Revoke Tokens
+            </Menu.Item>
+            {user.isAdmin && <Menu.Item component={Link} to="/admin">Admin</Menu.Item>}
+            <Menu.Item component={Link} to="/logout" leftSection={<IconLogout size={14} />}>
+              Logout
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       </Flex>
     </AppShell.Header>
     <AppShell.Main>
