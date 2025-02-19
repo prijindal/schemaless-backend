@@ -16,7 +16,7 @@ const main = async () => {
   } catch (e) {
     console.log("User already exist");
   }
-  const response = await axios.post(`${url}/user/login/login`, {
+  const response = await axios.post(`${url}/user/login`, {
     username: credentials.username,
     password: credentials.password,
   }, { headers: { "Content-Type": "application/json" } });

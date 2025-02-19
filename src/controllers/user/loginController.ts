@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
-import { Body, Post, Response, Route, SuccessResponse, Tags } from "tsoa";
+import { Body, Get, Post, Response, Route, SuccessResponse, Tags } from "tsoa";
 import { UserAuthService } from "../../auth/auth.user.service";
 import { PROJECT_KEY } from "../../config";
 import { UserStatus } from "../../entity/user.entity";
@@ -30,7 +30,7 @@ export class UserLoginController {
 	 * @throws {InvalidCredentialsError} if user doesn't exist or password doesn't match
 	 * @throws {UserUnauthorizedError} if user is not activated
 	 */
-	@Post("/login")
+	@Post("/")
 	@Response<UserUnauthorizedError>(UserUnauthorizedError.status_code)
 	@Response<InvalidCredentialsError>(InvalidCredentialsError.status_code)
 	@SuccessResponse(200)
@@ -78,7 +78,15 @@ export class UserLoginController {
 		return true;
 	}
 
-	// TODO: Add an API for revoking user token
+
+	@Get("/initialized")
+	@SuccessResponse(200)
+	async getInitialized() {
+		const existingUsers = await this.userRepository.getOne({ is_admin: true, project_key: PROJECT_KEY });
+		return {
+			isInitialized: existingUsers != null,
+		};
+	}
 
 	/**
 	 * Check if any admin user is available

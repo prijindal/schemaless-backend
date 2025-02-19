@@ -32,8 +32,15 @@ describe("Registration API", () => {
     expect(response.data).toEqual(true);
   })
 
+  it("should check if server is now initialized", async () => {
+    const response = await axios.get(`${host}/api/user/login/initialized`);
+
+    expect(response.status).toEqual(200);
+    expect(response.data.isInitialized).toEqual(true);
+  })
+
   it("performm login for admin user", async () => {
-    const response = await axios.post(`${host}/api/user/login/login`, {
+    const response = await axios.post(`${host}/api/user/login`, {
       username: "admin",
       password: "admin",
     });

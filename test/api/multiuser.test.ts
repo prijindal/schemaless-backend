@@ -30,7 +30,7 @@ describe("Multi User API", () => {
 
     expect(response.status).toEqual(200);
     expect(response.data).toEqual(true);
-    const loginResponse = await axios.post(`${host}/api/user/login/login`, {
+    const loginResponse = await axios.post(`${host}/api/user/login`, {
       username: "admin",
       password: "admin",
     });
@@ -51,7 +51,7 @@ describe("Multi User API", () => {
 
     let loginResponse: AxiosResponse | undefined;
     try {
-      loginResponse = await axios.post(`${host}/api/user/login/login`, {
+      loginResponse = await axios.post(`${host}/api/user/login`, {
         username: username,
         password: "user1",
       });
@@ -96,7 +96,7 @@ describe("Multi User API", () => {
   })
 
   it("Login secondary user", async () => {
-    const loginResponse = await axios.post(`${host}/api/user/login/login`, {
+    const loginResponse = await axios.post(`${host}/api/user/login`, {
       username: "user1",
       password: "user1",
     });

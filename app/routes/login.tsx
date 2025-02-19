@@ -23,19 +23,15 @@ export const action: ActionFunction = async ({
   const username = bodyParams.get("username");
   const password = bodyParams.get("password");
 
-  try {
-    const response = await loginUser(username?.slice() as string, password?.slice() as string);
+  const response = await loginUser(username?.slice() as string, password?.slice() as string);
 
-    if (response != null) {
-      return redirect("/", {
-        headers: {
-          "Set-Cookie": await setUser(request, response),
-        },
-      });
-    } else {
-      return {};
-    }
-  } catch (e) {
-    throw e;
+  if (response != null) {
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": await setUser(request, response),
+      },
+    });
+  } else {
+    throw new Error("Invalid username or password");
   }
 }
