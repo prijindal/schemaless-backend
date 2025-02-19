@@ -6,14 +6,14 @@ import { TypeOrmConnection } from "../../db/typeorm";
 import { EntityHistory as EntityHistoryEntity } from "../../entity/entity_history.entity";
 import { EntityHistoryRepository } from "../../repositories/entity_history.repository";
 
-interface EntityHistory extends Pick<EntityHistoryEntity, "action" | "created_at" | "entity_id" | "entity_name" | "id" | "payload" | "timestamp"> { };
+export interface EntityHistory extends Pick<EntityHistoryEntity, "action" | "created_at" | "entity_id" | "entity_name" | "id" | "payload" | "timestamp"> { };
 
 type DateParams = {
   gte?: Date;
   lte?: Date;
 }
 
-enum EntityHistoryRequestOrderEnum { "asc" = "asc", "desc" = "desc" };
+export enum EntityHistoryRequestOrderEnum { "asc" = "asc", "desc" = "desc" };
 
 export type EntityHistoryRequest = {
   entity_name: string;

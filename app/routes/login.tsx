@@ -1,19 +1,36 @@
+import { Alert, Button, Center, Flex, Group, TextInput } from '@mantine/core';
 import React from "react";
-import { ActionFunction, ActionFunctionArgs, Form, redirect } from "react-router";
-import { loginUser } from "../utils/api";
+import { ActionFunction, ActionFunctionArgs, Form, Link, redirect } from "react-router";
+import { isInitialized, loginUser } from "../utils/api";
 import { setUser } from "../utils/user";
+
+export async function loader() {
+  const initialized = await isInitialized();
+  if (!initialized) {
+    return redirect("/initialize",);
+  }
+  return Response.json({});
+}
 
 export default function Login({
   actionData,
 }) {
-  return <div>
-    <Form method="POST">
-      {actionData?.error && <div>{actionData.error}</div>}
-      <input type="text" name="username" />
-      <input type="password" name="password" />
-      <input type="submit" />
-    </Form>
-  </div>
+  return <Flex direction="row" justify="center" align="start">
+    <Center maw={400} w="100%" mt="xl" p="xl" bg="var(--mantine-color-gray-light)">
+      <Form method="POST">
+        {actionData?.error && <Alert variant="filled" color="red" title="Error">{actionData.error} </Alert>
+        }
+        <TextInput label="Username" type="text" name="username" />
+        <TextInput label="Password" type="password" name="password" />
+        <Group justify="center" mt="md">
+          <Button type="submit">Submit</Button>
+        </Group>
+        <Group justify="center" mt="md">
+          <Button component={Link} to="/register" type="button">Register</Button>
+        </Group>
+      </Form>
+    </Center>
+  </Flex>
 }
 
 export const action: ActionFunction = async ({
