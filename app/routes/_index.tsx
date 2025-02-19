@@ -1,7 +1,8 @@
-import { AppShell, Flex, Table, Tabs, Title } from "@mantine/core";
+import { ActionIcon, AppShell, Flex, Table, Tabs, Title } from "@mantine/core";
+import { IconLogout } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import React from "react";
-import { redirect, useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { Link, redirect, useLoaderData, type LoaderFunctionArgs } from "react-router";
 import type { EntityHistory, EntityHistoryResponse } from "../../src/controllers/entity/entityService";
 import { getEntities, getEntitiesHistory, verifyUser } from "../utils/api";
 import { extractJwtToken } from "../utils/user";
@@ -32,10 +33,17 @@ export default function Login() {
   return <AppShell
     header={{ height: 60 }}
     padding="md">
-    <AppShell.Header p="md"><Flex direction="row" justify="space-between" align="center" h="100%">
-      <Title order={4}>Schemaless</Title>
-      <Title order={6}>{user.username}</Title>
-    </Flex></AppShell.Header>
+    <AppShell.Header p="md">
+      <Flex direction="row" justify="space-between" align="center" h="100%">
+        <Title order={4}>Schemaless</Title>
+        <Title order={6}>
+          <span>{user.username}</span>
+          <ActionIcon ml="lg" variant="filled" component={Link} to="/logout" aria-label="Logout">
+            <IconLogout style={{ width: '70%', height: '70%' }} stroke={1.5} />
+          </ActionIcon>
+        </Title>
+      </Flex>
+    </AppShell.Header>
     <AppShell.Main>
       {user.history.length == 0 && <div>No Entities present</div>}
       {user.history.length > 0 &&
