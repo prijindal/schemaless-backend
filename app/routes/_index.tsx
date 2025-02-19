@@ -1,6 +1,5 @@
-import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import React from "react";
+import { redirect, useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { getEntities, verifyUser } from "../utils/api";
 import { extractJwtToken } from "../utils/user";
 

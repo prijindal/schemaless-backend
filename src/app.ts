@@ -1,5 +1,5 @@
 // src/app.ts
-import { createRequestHandler } from "@remix-run/express";
+import { createRequestHandler } from "@react-router/express";
 import express from "express";
 
 // @ts-expect-error build/server files don't have types

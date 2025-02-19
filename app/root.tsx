@@ -1,10 +1,10 @@
+import React from "react";
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
-} from "@remix-run/react";
-import React from "react";
+} from "react-router";
 
 export default function App() {
   return (

@@ -1,13 +1,14 @@
-import { ActionFunction, ActionFunctionArgs, redirect } from "@remix-run/node";
-import {
-  Form,
-} from "@remix-run/react";
 import React from "react";
+import { ActionFunction, ActionFunctionArgs, Form, redirect } from "react-router";
 import { loginUser } from "../utils/api";
 import { setUser } from "../utils/user";
-export default function Login() {
+
+export default function Login({
+  actionData,
+}) {
   return <div>
     <Form method="POST">
+      {actionData?.error && <div>{actionData.error}</div>}
       <input type="text" name="username" />
       <input type="password" name="password" />
       <input type="submit" />
@@ -32,6 +33,8 @@ export const action: ActionFunction = async ({
       },
     });
   } else {
-    throw new Error("Invalid username or password");
+    return {
+      error: "Invalid username or password"
+    };
   }
 }
