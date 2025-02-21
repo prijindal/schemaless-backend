@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 import { inject } from "inversify";
 import { provide } from "inversify-binding-decorators";
